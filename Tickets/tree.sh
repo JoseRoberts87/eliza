@@ -1,0 +1,1 @@
+tree -I 'node_modules|.git|.next|coverage|tickets' --dirsfirst > ./Tickets/tree.txt

@@ -32,3 +32,5 @@ Application Response:
 - Agent uses context and results to generate response email
 - Agent sends email to queue
 - Agent updates memory of application with response results
+
+Agent can message Applicant for more details

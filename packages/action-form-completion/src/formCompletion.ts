@@ -35,26 +35,26 @@ export const formCompletionAction: Action = {
             message.content?.type === "application" && !!message.content.data
         );
     },
-
     handler: async (
         runtime: IAgentRuntime,
         message: Memory,
-        state: State | undefined,
-        _options: any,
-        callback: HandlerCallback
+        state?: State,
+        _options?: any,
+        callback?: HandlerCallback
     ) => {
-        if (!state) {
-            callback(
-                {
-                    text: "Failed to validate application: Missing state.",
-                    type: "error",
-                },
-                []
-            );
-            return;
-        }
-
         try {
+            if (!state) {
+                if (callback) {
+                    callback(
+                        {
+                            text: "Failed to validate application: Missing state.",
+                            type: "error",
+                        },
+                        []
+                    );
+                }
+                return;
+            }
             // First, validate form completion
             const formContext = composeContext({
                 state,
@@ -108,18 +108,20 @@ export const formCompletionAction: Action = {
             };
 
             if (!isFormCompletionResult(result)) {
-                callback(
-                    {
-                        text: "Failed to validate and analyze application. Invalid result format.",
-                        type: "error",
-                    },
-                    []
-                );
+                if (callback) {
+                    callback(
+                        {
+                            text: "Failed to validate and analyze application. Invalid result format.",
+                            type: "error",
+                        },
+                        []
+                    );
+                }
                 return;
             }
 
             // Store result in memory
-            const memoryManager = runtime.getMemoryManager();
+            const memoryManager = runtime.getMemoryManager("form_validation");
             if (memoryManager) {
                 await memoryManager.createMemory({
                     content: {
@@ -136,31 +138,35 @@ export const formCompletionAction: Action = {
 
             // Generate response message
             let responseText = `Form Validation Results:
-- Completion Status: ${result.isComplete ? "Complete" : "Incomplete"}
-- Score: ${result.score}/100
-${result.missingFields.length > 0 ? `\nMissing Fields:\n${result.missingFields.map((f) => `- ${f}`).join("\n")}` : ""}
-${result.validationErrors.length > 0 ? `\nValidation Errors:\n${result.validationErrors.map((e) => `- ${e}`).join("\n")}` : ""}`;
+            - Completion Status: ${result.isComplete ? "Complete" : "Incomplete"}
+            - Score: ${result.score}/100
+            ${result.missingFields.length > 0 ? `\nMissing Fields:\n${result.missingFields.map((f) => `- ${f}`).join("\n")}` : ""}
+            ${result.validationErrors.length > 0 ? `\nValidation Errors:\n${result.validationErrors.map((e) => `- ${e}`).join("\n")}` : ""}`;
 
             if (result.questionAnalysis) {
                 responseText += `\n\nQuestion Analysis:
-- Overall Score: ${result.questionAnalysis.overallScore}/100
-- Summary: ${result.questionAnalysis.summary}
-${result.questionAnalysis.recommendations.length > 0 ? `\nRecommendations:\n${result.questionAnalysis.recommendations.map((r) => `- ${r}`).join("\n")}` : ""}`;
+            - Overall Score: ${result.questionAnalysis.overallScore}/100
+            - Summary: ${result.questionAnalysis.summary}
+            ${result.questionAnalysis.recommendations.length > 0 ? `\nRecommendations:\n${result.questionAnalysis.recommendations.map((r) => `- ${r}`).join("\n")}` : ""}`;
             }
 
-            callback({ text: responseText }, []);
+            if (callback) {
+                callback({ text: responseText }, []);
+            }
         } catch (error) {
             elizaLogger.error(
                 "Error validating and analyzing application:",
                 error
             );
-            callback(
-                {
-                    text: "Failed to validate and analyze application. Please check the logs.",
-                    type: "error",
-                },
-                []
-            );
+            if (callback) {
+                callback(
+                    {
+                        text: "Failed to validate and analyze application. Please check the logs.",
+                        type: "error",
+                    },
+                    []
+                );
+            }
         }
     },
 

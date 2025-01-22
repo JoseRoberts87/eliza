@@ -64,3 +64,36 @@ export const isFormCompletionResult = (
                 Array.isArray(obj.questionAnalysis.recommendations)))
     );
 };
+
+export const UniquenessAssessmentSchema = z.object({
+    innovationScore: z.number().min(0).max(100),
+    uniquenessScore: z.number().min(0).max(100),
+    similarApplications: z.array(
+        z.object({
+            id: z.string(),
+            similarity: z.number().min(0).max(100),
+            matchingAspects: z.array(z.string()),
+        })
+    ),
+    innovativeAspects: z.array(z.string()),
+    marketDifferentiators: z.array(z.string()),
+    recommendations: z.array(z.string()),
+});
+
+export type UniquenessAssessmentResult = z.infer<
+    typeof UniquenessAssessmentSchema
+>;
+
+export const isUniquenessAssessmentResult = (
+    obj: any
+): obj is UniquenessAssessmentResult => {
+    return (
+        typeof obj === "object" &&
+        typeof obj.innovationScore === "number" &&
+        typeof obj.uniquenessScore === "number" &&
+        Array.isArray(obj.similarApplications) &&
+        Array.isArray(obj.innovativeAspects) &&
+        Array.isArray(obj.marketDifferentiators) &&
+        Array.isArray(obj.recommendations)
+    );
+};

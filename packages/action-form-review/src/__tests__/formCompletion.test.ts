@@ -296,7 +296,7 @@ describe("formCompletionAction", () => {
 
             expect(mockCallback).toHaveBeenCalledWith(
                 {
-                    text: "Failed to validate and analyze application. Please check the logs.",
+                    text: "Failed to validate application. Please check the logs.",
                     type: "error",
                 },
                 []

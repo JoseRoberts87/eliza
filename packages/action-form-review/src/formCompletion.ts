@@ -14,20 +14,15 @@ import {
     FormCompletionSchema,
     FormCompletionResult,
     isFormCompletionResult,
-    QuestionAnalysisSchema,
 } from "./types";
-import { formCompletionTemplate, questionAnalysisTemplate } from "./templates";
+import { formCompletionTemplate } from "./templates";
 import { z } from "zod";
 
 export const formCompletionAction: Action = {
     name: "VALIDATE_APPLICATION_FORM",
-    similes: [
-        "CHECK_APPLICATION_FORM",
-        "VERIFY_APPLICATION_FORM",
-        "ANALYZE_APPLICATION_QUESTIONS",
-    ],
+    similes: ["CHECK_APPLICATION_FORM", "VERIFY_APPLICATION_FORM"],
     description:
-        "Validates and analyzes VC Accelerator applications, including form completion and detailed question analysis",
+        "Validates VC Accelerator applications by checking form completion and required fields",
 
     validate: async (runtime: IAgentRuntime, message: Memory) => {
         // Validate that we have an application to check
@@ -55,7 +50,8 @@ export const formCompletionAction: Action = {
                 }
                 return;
             }
-            // First, validate form completion
+
+            // Validate form completion
             const formContext = composeContext({
                 state,
                 template: formCompletionTemplate,
@@ -72,46 +68,18 @@ export const formCompletionAction: Action = {
                 typeof FormCompletionSchema
             >;
 
-            // If there are additional questions, analyze them
-            let questionAnalysis = undefined;
-            const applicationData = message.content.data as Record<string, any>;
-            if (applicationData?.additionalInfo?.questions) {
-                const questionContext = composeContext({
-                    state,
-                    template: questionAnalysisTemplate,
-                });
-
-                const analysisResult = await generateObject({
-                    runtime,
-                    context: questionContext,
-                    modelClass: ModelClass.SMALL,
-                    schema: QuestionAnalysisSchema,
-                });
-
-                const analysis = analysisResult.object as z.infer<
-                    typeof QuestionAnalysisSchema
-                >;
-                questionAnalysis = {
-                    overallScore: analysis.analysis.quality,
-                    analyses: [analysis],
-                    summary: analysis.feedback.join("\n"),
-                    recommendations: analysis.followUpQuestions || [],
-                };
-            }
-
             const result: FormCompletionResult = {
                 isComplete: !!formResult,
                 missingFields: formResult ? [] : ["form data"],
                 validationErrors: formResult ? [] : ["invalid form data"],
                 score: formResult ? 100 : 0,
-                questionAnalysis,
             };
 
             if (!isFormCompletionResult(result)) {
                 if (callback) {
                     callback(
                         {
-                            text: "Failed to validate and analyze application. Invalid result format.",
+                            text: "Failed to validate application. Invalid result format.",
                             type: "error",
                         },
                         []
@@ -143,25 +111,15 @@ export const formCompletionAction: Action = {
             ${result.missingFields.length > 0 ? `\nMissing Fields:\n${result.missingFields.map((f) => `- ${f}`).join("\n")}` : ""}
             ${result.validationErrors.length > 0 ? `\nValidation Errors:\n${result.validationErrors.map((e) => `- ${e}`).join("\n")}` : ""}`;
 
-            if (result.questionAnalysis) {
-                responseText += `\n\nQuestion Analysis:
-            - Overall Score: ${result.questionAnalysis.overallScore}/100
-            - Summary: ${result.questionAnalysis.summary}
-            ${result.questionAnalysis.recommendations.length > 0 ? `\nRecommendations:\n${result.questionAnalysis.recommendations.map((r) => `- ${r}`).join("\n")}` : ""}`;
-            }
-
             if (callback) {
                 callback({ text: responseText }, []);
             }
         } catch (error) {
-            elizaLogger.error(
-                "Error validating and analyzing application:",
-                error
-            );
+            elizaLogger.error("Error validating application:", error);
             if (callback) {
                 callback(
                     {
-                        text: "Failed to validate and analyze application. Please check the logs.",
+                        text: "Failed to validate application. Please check the logs.",
                         type: "error",
                     },
                     []
@@ -188,22 +146,13 @@ export const formCompletionAction: Action = {
                                 role: "CEO",
                             },
                         ],
-                        additionalInfo: {
-                            questions: [
-                                {
-                                    id: "q1",
-                                    question: "What is your target market?",
-                                    answer: "Our target market includes enterprise software companies...",
-                                },
-                            ],
-                        },
                     },
                 },
             },
             {
                 user: "{{agentName}}",
                 content: {
-                    text: "Form Validation Results:\n- Completion Status: Complete\n- Score: 85/100\n\nQuestion Analysis:\n- Overall Score: 90/100\n- Summary: Strong market understanding with clear focus",
+                    text: "Form Validation Results:\n- Completion Status: Complete\n- Score: 100/100",
                     action: "VALIDATE_APPLICATION_FORM",
                 },
             },
@@ -218,22 +167,13 @@ export const formCompletionAction: Action = {
                         companyName: "StartupX",
                         description: "Too short",
                         founderDetails: [],
-                        additionalInfo: {
-                            questions: [
-                                {
-                                    id: "q1",
-                                    question: "What is your target market?",
-                                    answer: "Everyone",
-                                },
-                            ],
-                        },
                     },
                 },
             },
             {
                 user: "{{agentName}}",
                 content: {
-                    text: "Form Validation Results:\n- Completion Status: Incomplete\n- Score: 30/100\nMissing Fields:\n- Founder Details\nValidation Errors:\n- Description too short\n\nQuestion Analysis:\n- Overall Score: 40/100\n- Summary: Response lacks specificity and market understanding",
+                    text: "Form Validation Results:\n- Completion Status: Incomplete\n- Score: 30/100\nMissing Fields:\n- Founder Details\nValidation Errors:\n- Description too short",
                     action: "VALIDATE_APPLICATION_FORM",
                 },
             },

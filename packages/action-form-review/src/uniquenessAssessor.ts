@@ -15,6 +15,12 @@ import {
     isUniquenessAssessmentResult,
 } from "./types";
 
+interface SimilarApplication {
+    id: string;
+    similarity: number;
+    matchingAspects: string[];
+}
+
 const uniquenessTemplate = `Analyze the application for uniqueness and innovation:
 
 Company: {{companyName}}
@@ -113,22 +119,22 @@ Innovation Score: ${assessment.object.innovationScore}/100
 Uniqueness Score: ${assessment.object.uniquenessScore}/100
 
 Key Innovative Aspects:
-${assessment.object.innovativeAspects.map((aspect) => `- ${aspect}`).join("\n")}
+${assessment.object.innovativeAspects.map((aspect: string) => `- ${aspect}`).join("\n")}
 
 Market Differentiators:
-${assessment.object.marketDifferentiators.map((diff) => `- ${diff}`).join("\n")}
+${assessment.object.marketDifferentiators.map((diff: string) => `- ${diff}`).join("\n")}
 
 Similar Applications Found: ${assessment.object.similarApplications.length}
 ${assessment.object.similarApplications
     .map(
-        (app) =>
+        (app: SimilarApplication) =>
             `- Application ${app.id} (${app.similarity}% similar)
      Matching aspects: ${app.matchingAspects.join(", ")}`
     )
     .join("\n")}
 
 Recommendations:
-${assessment.object.recommendations.map((rec) => `- ${rec}`).join("\n")}`;
+${assessment.object.recommendations.map((rec: string) => `- ${rec}`).join("\n")}`;
 
             callback({ text: responseText }, []);
             return;

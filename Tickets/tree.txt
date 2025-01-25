@@ -1,7 +1,5 @@
 .
 ├── Project
-│   └── tree.txt
-├── Ticketing
 │   ├── ProjectData
 │   │   ├── CreateEpicsPromptSample.md
 │   │   ├── JestTestDebugPrompt.md
@@ -11,12 +9,49 @@
 │   │   ├── modelExample.md
 │   │   └── tree.sh
 │   └── README.md
+├── Tickets
+│   ├── epic-001
+│   │   ├── story-001-01
+│   │   │   ├── Task-001-01-01-Runtime-Config.md
+│   │   │   ├── Task-001-01-02-Event-Handler.md
+│   │   │   ├── Task-001-01-03-Validation-Service.md
+│   │   │   ├── Task-001-01-04-Error-Handling.md
+│   │   │   └── Task-001-01-05-Acknowledgment.md
+│   │   ├── story-001-02
+│   │   │   ├── Task-001-02-01-Memory-Manager.md
+│   │   │   ├── Task-001-02-02-Schema-Implementation.md
+│   │   │   ├── Task-001-02-03-Semantic-Search.md
+│   │   │   ├── Task-001-02-04-Relationship-Tracking.md
+│   │   │   └── Task-001-02-05-Memory-Cleanup.md
+│   │   ├── Story-001-01-Application-Listener.md
+│   │   ├── Story-001-02-Memory-System.md
+│   │   └── Story-001-03-Processing-Pipeline.md
+│   ├── epic-002
+│   │   ├── Story-002-01-Form-Completion.md
+│   │   ├── Story-002-02-Questions-Analyzer.md
+│   │   ├── Story-002-03-Uniqueness-Assessment.md
+│   │   └── Story-002-04-Score-Generator.md
+│   ├── Epic-001-Application-Intake.md
+│   ├── Epic-002-Application-Review.md
+│   ├── Epic-003-Application-Decision.md
+│   ├── Epic-004-Application-Response.md
+│   ├── ProjectOutline.md
+│   ├── Story-002-01-Form-Completion-Action.md
+│   ├── Story-002-02-Questions-Analysis-Action.md
+│   ├── Story-002-03-Uniqueness-Action.md
+│   ├── Story-002-04-Score-Generator-Action.md
+│   ├── tree.sh
+│   └── tree.txt
 ├── agent
+│   ├── content_cache
+│   ├── data
+│   │   └── db.sqlite
 │   ├── src
 │   │   ├── __tests__
 │   │   │   └── client-type-identification.test.ts
 │   │   └── index.ts
 │   ├── jest.config.js
+│   ├── model.gguf
 │   ├── package.json
 │   └── tsconfig.json
 ├── characters
@@ -27,6 +62,15 @@
 │   ├── tate.character.json
 │   └── trump.character.json
 ├── client
+│   ├── dist
+│   │   ├── assets
+│   │   │   ├── index-Byu22B5s.js
+│   │   │   ├── index-Byu22B5s.js.br
+│   │   │   ├── index-DaSq24KC.css
+│   │   │   └── index-DaSq24KC.css.br
+│   │   ├── elizaos-icon.png
+│   │   ├── elizaos.webp
+│   │   └── index.html
 │   ├── public
 │   │   ├── elizaos-icon.png
 │   │   └── elizaos.webp
@@ -1048,7 +1092,25 @@
 │   │       ├── package.json
 │   │       ├── tsconfig.json
 │   │       └── tsup.config.ts
+│   ├── action-form-review
+│   │   ├── src
+│   │   │   ├── __mocks__
+│   │   │   │   └── @elizaos
+│   │   │   │       └── core.ts
+│   │   │   ├── __tests__
+│   │   │   │   └── formCompletion.test.ts
+│   │   │   ├── formCompletion.ts
+│   │   │   ├── index.ts
+│   │   │   ├── templates.ts
+│   │   │   └── types.ts
+│   │   ├── jest.config.js
+│   │   ├── package.json
+│   │   └── tsconfig.json
 │   ├── adapter-pglite
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   └── index.ts
 │   │   ├── eslint.config.mjs
@@ -1057,6 +1119,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── adapter-postgres
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── migrations
 │   │   │   └── 20240318103238_remote_schema.sql
 │   │   ├── src
@@ -1074,6 +1140,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── adapter-redis
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   └── index.ts
 │   │   ├── eslint.config.mjs
@@ -1081,6 +1151,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── adapter-sqlite
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── index.ts
 │   │   │   ├── sqliteTables.ts
@@ -1090,6 +1164,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── adapter-sqljs
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── index.ts
 │   │   │   ├── sqliteTables.ts
@@ -1099,6 +1177,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── adapter-supabase
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   └── index.ts
 │   │   ├── config.toml
@@ -1109,6 +1191,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── client-auto
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   └── index.ts
 │   │   ├── eslint.config.mjs
@@ -1116,6 +1202,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── client-direct
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── README.md
 │   │   │   ├── api.ts
@@ -1128,6 +1218,10 @@
 │   ├── client-discord
 │   │   ├── __tests__
 │   │   │   └── discord-client.test.ts
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── chat_with_attachments.ts
@@ -1153,6 +1247,20 @@
 │   │   ├── tsup.config.ts
 │   │   └── vitest.config.ts
 │   ├── client-farcaster
+│   │   ├── dist
+│   │   │   ├── _esm-M6467HDT.js
+│   │   │   ├── _esm-M6467HDT.js.map
+│   │   │   ├── ccip-EUSABVOD.js
+│   │   │   ├── ccip-EUSABVOD.js.map
+│   │   │   ├── chunk-OKWGBTKX.js
+│   │   │   ├── chunk-OKWGBTKX.js.map
+│   │   │   ├── chunk-PR4QN5HX.js
+│   │   │   ├── chunk-PR4QN5HX.js.map
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   ├── index.js.map
+│   │   │   ├── secp256k1-5HNE4PLH.js
+│   │   │   └── secp256k1-5HNE4PLH.js.map
 │   │   ├── src
 │   │   │   ├── actions.ts
 │   │   │   ├── client.ts
@@ -1171,6 +1279,10 @@
 │   │   ├── __tests__
 │   │   │   ├── environment.test.ts
 │   │   │   └── index.test.ts
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── environment.ts
 │   │   │   └── index.ts
@@ -1180,6 +1292,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── client-instagram
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── lib
 │   │   │   │   ├── actions.ts
@@ -1199,6 +1315,22 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── client-lens
+│   │   ├── dist
+│   │   │   ├── _esm-M6467HDT.js
+│   │   │   ├── _esm-M6467HDT.js.map
+│   │   │   ├── ccip-MMGH6DXX.js
+│   │   │   ├── ccip-MMGH6DXX.js.map
+│   │   │   ├── chunk-4L6P6TY5.js
+│   │   │   ├── chunk-4L6P6TY5.js.map
+│   │   │   ├── chunk-NTU6R7BC.js
+│   │   │   ├── chunk-NTU6R7BC.js.map
+│   │   │   ├── chunk-PR4QN5HX.js
+│   │   │   ├── chunk-PR4QN5HX.js.map
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   ├── index.js.map
+│   │   │   ├── secp256k1-QUTB2QC2.js
+│   │   │   └── secp256k1-QUTB2QC2.js.map
 │   │   ├── src
 │   │   │   ├── providers
 │   │   │   │   └── StorjProvider.ts
@@ -1219,6 +1351,9 @@
 │   │   │   ├── message-manager.test.ts
 │   │   │   ├── slack-client.provider.test.ts
 │   │   │   └── slack-client.test.ts
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   └── index.js
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── chat_with_attachments.ts
@@ -1258,6 +1393,10 @@
 │   │   │   ├── messageManager.test.ts
 │   │   │   ├── telegramClient.test.ts
 │   │   │   └── utils.test.ts
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── config
 │   │   │   │   └── default.json5
@@ -1279,6 +1418,10 @@
 │   │   │   ├── base.test.ts
 │   │   │   ├── environment.test.ts
 │   │   │   └── post.test.ts
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── __tests__
 │   │   │   │   └── environment.test.ts
@@ -1297,6 +1440,7 @@
 │   │   ├── tsconfig.json
 │   │   ├── tsup.config.ts
 │   │   └── vitest.config.ts
+│   ├── content_cache
 │   ├── core
 │   │   ├── __tests__
 │   │   │   ├── actions.test.ts
@@ -1320,6 +1464,31 @@
 │   │   │   ├── runtime.test.ts
 │   │   │   ├── uuid.test.ts
 │   │   │   └── videoGeneration.test.ts
+│   │   ├── cache
+│   │   │   └── fast-bge-small-en-v1.5
+│   │   │       ├── config.json
+│   │   │       ├── model_optimized.onnx
+│   │   │       ├── ort_config.json
+│   │   │       ├── special_tokens_map.json
+│   │   │       ├── tokenizer.json
+│   │   │       ├── tokenizer_config.json
+│   │   │       └── vocab.txt
+│   │   ├── dist
+│   │   │   ├── _esm-FVHF6KDD.js
+│   │   │   ├── _esm-FVHF6KDD.js.map
+│   │   │   ├── ccip-RMGHL4BL.js
+│   │   │   ├── ccip-RMGHL4BL.js.map
+│   │   │   ├── chunk-4L6P6TY5.js
+│   │   │   ├── chunk-4L6P6TY5.js.map
+│   │   │   ├── chunk-BEDRBX3Q.js
+│   │   │   ├── chunk-BEDRBX3Q.js.map
+│   │   │   ├── chunk-PR4QN5HX.js
+│   │   │   ├── chunk-PR4QN5HX.js.map
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   ├── index.js.map
+│   │   │   ├── secp256k1-QUTB2QC2.js
+│   │   │   └── secp256k1-QUTB2QC2.js.map
 │   │   ├── src
 │   │   │   ├── database
 │   │   │   │   └── CircuitBreaker.ts
@@ -1369,6 +1538,9 @@
 │   │   ├── tsup.config.ts
 │   │   └── vitest.config.ts
 │   ├── create-eliza-app
+│   │   ├── dist
+│   │   │   ├── index.cjs
+│   │   │   └── index.mjs
 │   │   ├── registry
 │   │   │   └── eliza.json
 │   │   ├── src
@@ -1377,7 +1549,12 @@
 │   │   ├── eslint.config.mjs
 │   │   ├── package.json
 │   │   └── tsconfig.json
+│   ├── debug_audio
 │   ├── plugin-0g
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   └── upload.ts
@@ -1392,6 +1569,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-3d-generation
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── constants.ts
 │   │   │   └── index.ts
@@ -1401,6 +1582,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-abstract
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── index.ts
@@ -1423,6 +1608,10 @@
 │   ├── plugin-akash
 │   │   ├── assets
 │   │   │   └── akash.jpg
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── closeDeployment.ts
@@ -1455,6 +1644,10 @@
 │   │   ├── tsup.config.ts
 │   │   └── vitest.config.ts
 │   ├── plugin-allora
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   └── getInference.ts
@@ -1470,6 +1663,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-anyone
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── index.ts
@@ -1484,6 +1681,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-aptos
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   └── transfer.ts
@@ -1500,6 +1701,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-arthera
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   └── transfer.ts
@@ -1519,6 +1724,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-asterai
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   └── query.ts
@@ -1532,6 +1741,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-autonome
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   └── launchAgent.ts
@@ -1541,6 +1754,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-avail
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── submitData.ts
@@ -1553,6 +1770,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-avalanche
+│   │   ├── dist
+│   │   │   ├── ccip-UTQEEQUV.js
+│   │   │   ├── chunk-RLU2MBUH.js
+│   │   │   └── index.js
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── tokenMillCreate.ts
@@ -1577,6 +1798,21 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-b2
+│   │   ├── dist
+│   │   │   ├── _esm-FVHF6KDD.js
+│   │   │   ├── _esm-FVHF6KDD.js.map
+│   │   │   ├── ccip-GBUN5SE6.js
+│   │   │   ├── ccip-GBUN5SE6.js.map
+│   │   │   ├── chunk-4L6P6TY5.js
+│   │   │   ├── chunk-4L6P6TY5.js.map
+│   │   │   ├── chunk-MT4MBS3M.js
+│   │   │   ├── chunk-MT4MBS3M.js.map
+│   │   │   ├── chunk-PR4QN5HX.js
+│   │   │   ├── chunk-PR4QN5HX.js.map
+│   │   │   ├── index.js
+│   │   │   ├── index.js.map
+│   │   │   ├── secp256k1-QUTB2QC2.js
+│   │   │   └── secp256k1-QUTB2QC2.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── stake.ts
@@ -1611,6 +1847,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-binance
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── priceCheck.ts
@@ -1644,6 +1884,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-birdeye
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── test-all-endpoints.ts
@@ -1674,6 +1918,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-bootstrap
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── continue.ts
@@ -1740,6 +1988,10 @@
 │   │   │   ├── README.md
 │   │   │   ├── package.json
 │   │   │   └── tsconfig.json
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── plugins
 │   │   │   │   ├── advancedTrade.ts
@@ -1759,6 +2011,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-coingecko
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── getMarkets.ts
@@ -1784,6 +2040,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-coinmarketcap
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   └── getPrice
@@ -1801,6 +2061,22 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-conflux
+│   │   ├── dist
+│   │   │   ├── _esm-FVHF6KDD.js
+│   │   │   ├── _esm-FVHF6KDD.js.map
+│   │   │   ├── ccip-Z6D5R2QD.js
+│   │   │   ├── ccip-Z6D5R2QD.js.map
+│   │   │   ├── chunk-2OJMP5IQ.js
+│   │   │   ├── chunk-2OJMP5IQ.js.map
+│   │   │   ├── chunk-4L6P6TY5.js
+│   │   │   ├── chunk-4L6P6TY5.js.map
+│   │   │   ├── chunk-PR4QN5HX.js
+│   │   │   ├── chunk-PR4QN5HX.js.map
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   ├── index.js.map
+│   │   │   ├── secp256k1-QUTB2QC2.js
+│   │   │   └── secp256k1-QUTB2QC2.js.map
 │   │   ├── src
 │   │   │   ├── abi
 │   │   │   │   ├── crossSpaceCall.ts
@@ -1821,6 +2097,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-cosmos
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   └── transfer
@@ -1860,6 +2140,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-cronoszkevm
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── index.ts
@@ -1880,6 +2164,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-depin
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── depinProjects.ts
@@ -1900,6 +2188,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-dexscreener
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── index.ts
@@ -1917,6 +2209,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-echochambers
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── echoChamberClient.ts
 │   │   │   ├── environment.ts
@@ -1929,6 +2225,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-evm
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── bridge.ts
@@ -1966,6 +2266,10 @@
 │   ├── plugin-ferePro
 │   │   └── README.md
 │   ├── plugin-flow
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   └── transfer.ts
@@ -2021,6 +2325,10 @@
 │   │   ├── tsup.config.ts
 │   │   └── vitest.config.ts
 │   ├── plugin-fuel
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   └── transfer.ts
@@ -2037,6 +2345,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-genlayer
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── deployContract.ts
@@ -2058,6 +2370,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-giphy
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   └── sendGif.ts
@@ -2072,6 +2388,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-gitbook
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── providers
 │   │   │   │   └── gitbook.ts
@@ -2083,6 +2403,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-gitcoin-passport
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   └── getScore.ts
@@ -2093,6 +2417,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-goat
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions.ts
 │   │   │   ├── index.ts
@@ -2102,6 +2430,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-goplus
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── lib
 │   │   │   │   └── GoPlusManage.ts
@@ -2115,6 +2447,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-hyperliquid
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── cancelOrders.ts
@@ -2129,6 +2465,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-icp
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── prompts
@@ -2169,6 +2509,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-image-generation
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── environment.ts
 │   │   │   └── index.ts
@@ -2178,6 +2522,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-intiface
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── intiface-engine
 │   │   │   ├── CHANGELOG.md
 │   │   │   ├── README.md
@@ -2196,6 +2544,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-irys
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── services
 │   │   │   │   └── irysService.ts
@@ -2211,6 +2563,20 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-lensNetwork
+│   │   ├── dist
+│   │   │   ├── _esm-FVHF6KDD.js
+│   │   │   ├── _esm-FVHF6KDD.js.map
+│   │   │   ├── ccip-EMUA4VOV.js
+│   │   │   ├── ccip-EMUA4VOV.js.map
+│   │   │   ├── chunk-6SPRIEGM.js
+│   │   │   ├── chunk-6SPRIEGM.js.map
+│   │   │   ├── chunk-PR4QN5HX.js
+│   │   │   ├── chunk-PR4QN5HX.js.map
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   ├── index.js.map
+│   │   │   ├── secp256k1-5HNE4PLH.js
+│   │   │   └── secp256k1-5HNE4PLH.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   └── transfer.ts
@@ -2221,6 +2587,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-letzai
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── environment.ts
 │   │   │   ├── index-test.ts
@@ -2231,6 +2601,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-massa
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   └── transfer.ts
@@ -2246,6 +2620,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-movement
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   └── transfer.ts
@@ -2263,6 +2641,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-multiversx
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── createToken.ts
@@ -2282,6 +2664,13 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-near
+│   │   ├── dist
+│   │   │   ├── index.cjs
+│   │   │   ├── index.cjs.map
+│   │   │   ├── index.d.cts
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── swap.ts
@@ -2296,6 +2685,9 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-nft-collections
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   └── index.js
 │   │   ├── src
 │   │   │   ├── __tests__
 │   │   │   │   └── reservoir.test.ts
@@ -2342,6 +2734,10 @@
 │   │   ├── tsconfig.json
 │   │   └── vitest.config.ts
 │   ├── plugin-nft-generation
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── mintNFTAction.ts
@@ -2370,6 +2766,18 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-node
+│   │   ├── dist
+│   │   │   ├── chunk-PLDDJCW6.js
+│   │   │   ├── chunk-PLDDJCW6.js.map
+│   │   │   ├── chunk-W2OETGYU.js
+│   │   │   ├── chunk-W2OETGYU.js.map
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   ├── index.js.map
+│   │   │   ├── node-ponyfill-XYSXBJLI.js
+│   │   │   ├── node-ponyfill-XYSXBJLI.js.map
+│   │   │   ├── wrapper-ASOBW5EP.js
+│   │   │   └── wrapper-ASOBW5EP.js.map
 │   │   ├── scripts
 │   │   │   └── postinstall.js
 │   │   ├── src
@@ -2399,6 +2807,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-obsidian
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── activeNote.ts
@@ -2436,6 +2848,9 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-opacity
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   └── index.js
 │   │   ├── src
 │   │   │   ├── utils
 │   │   │   │   └── api.ts
@@ -2445,6 +2860,10 @@
 │   │   ├── package.json
 │   │   └── tsconfig.json
 │   ├── plugin-open-weather
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── getCurrentWeather.ts
@@ -2461,6 +2880,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-primus
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   └── postTweetAction.ts
@@ -2479,6 +2902,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-quai
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   └── transfer.ts
@@ -2490,6 +2917,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-rabbi-trader
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   └── analyzeTrade.ts
@@ -2520,6 +2951,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-sgx
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── plugins
 │   │   │   │   └── sgxPlugin.ts
@@ -2542,6 +2977,10 @@
 │   │   │   ├── providers
 │   │   │   │   └── token-security.test.ts
 │   │   │   └── token.test.ts
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── fomo.ts
@@ -2572,6 +3011,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-solana-agentkit
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   └── createToken.ts
@@ -2581,6 +3024,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-spheron
+│   │   ├── dist
+│   │   │   ├── index.d.mts
+│   │   │   ├── index.mjs
+│   │   │   └── index.mjs.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── deployment.ts
@@ -2602,6 +3049,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-squid-router
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   └── xChainSwap.ts
@@ -2622,6 +3073,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-stargaze
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── getCollectionStats.ts
@@ -2637,6 +3092,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-starknet
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── generate.ts
@@ -2668,6 +3127,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-story
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── attachTerms.ts
@@ -2695,6 +3158,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-sui
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   └── transfer.ts
@@ -2711,6 +3178,22 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-tee
+│   │   ├── dist
+│   │   │   ├── _esm-FVHF6KDD.js
+│   │   │   ├── _esm-FVHF6KDD.js.map
+│   │   │   ├── ccip-MMGH6DXX.js
+│   │   │   ├── ccip-MMGH6DXX.js.map
+│   │   │   ├── chunk-4L6P6TY5.js
+│   │   │   ├── chunk-4L6P6TY5.js.map
+│   │   │   ├── chunk-NTU6R7BC.js
+│   │   │   ├── chunk-NTU6R7BC.js.map
+│   │   │   ├── chunk-PR4QN5HX.js
+│   │   │   ├── chunk-PR4QN5HX.js.map
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   ├── index.js.map
+│   │   │   ├── secp256k1-QUTB2QC2.js
+│   │   │   └── secp256k1-QUTB2QC2.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   └── remoteAttestation.ts
@@ -2731,6 +3214,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-tee-log
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── adapters
 │   │   │   │   ├── sqliteDAO.ts
@@ -2748,6 +3235,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-tee-marlin
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   └── remoteAttestation.ts
@@ -2758,6 +3249,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-tee-verifiable-log
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── adapters
 │   │   │   │   └── sqliteVerifiableDAO.ts
@@ -2776,6 +3271,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-thirdweb
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   ├── chat.ts
@@ -2787,6 +3286,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-ton
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   └── transfer.ts
@@ -2801,6 +3304,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-trustdb
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── adapters
 │   │   │   │   └── trustScoreDatabase.ts
@@ -2811,6 +3318,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-tts
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── constants.ts
 │   │   │   └── index.ts
@@ -2822,6 +3333,10 @@
 │   ├── plugin-twitter
 │   │   ├── __tests__
 │   │   │   └── post.test.ts
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   └── post.ts
@@ -2834,6 +3349,10 @@
 │   │   ├── tsup.config.ts
 │   │   └── vitest.config.ts
 │   ├── plugin-video-generation
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── constants.ts
 │   │   │   └── index.ts
@@ -2843,6 +3362,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   ├── plugin-web-search
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── actions
 │   │   │   │   └── webSearch.ts
@@ -2860,6 +3383,10 @@
 │   │   │   │   ├── message.handler.test.ts
 │   │   │   │   └── webhook.handler.test.ts
 │   │   │   └── client.test.ts
+│   │   ├── dist
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.js
+│   │   │   └── index.js.map
 │   │   ├── src
 │   │   │   ├── handlers
 │   │   │   │   ├── index.ts
@@ -2877,6 +3404,10 @@
 │   │   ├── tsconfig.json
 │   │   └── tsup.config.ts
 │   └── plugin-zksync-era
+│       ├── dist
+│       │   ├── index.d.ts
+│       │   ├── index.js
+│       │   └── index.js.map
 │       ├── src
 │       │   ├── actions
 │       │   │   ├── index.ts
@@ -2972,8 +3503,10 @@
 ├── pnpm-workspace.yaml
 ├── prettier.config.cjs
 ├── renovate.json
+├── scrap.code.ts
+├── scrap.ideas.txt
 ├── scrap.txt
 ├── tsconfig.json
 └── turbo.json
 
-592 directories, 2385 files
+703 directories, 2807 files

@@ -1,13 +1,28 @@
 {
-    "name": "@elizaos/action-form-completion",
+    "name": "@elizaos/action-form-review",
     "version": "0.1.0",
-    "description": "Form Completion Action for VC Accelerator Applications",
+    "description": "Form Review Action for VC Accelerator Applications",
     "main": "dist/index.js",
+    "module": "dist/index.js",
     "types": "dist/index.d.ts",
+    "exports": {
+        "./package.json": "./package.json",
+        ".": {
+            "import": {
+                "@elizaos/source": "./src/index.ts",
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            }
+        }
+    },
+    "files": [
+        "dist"
+    ],
     "scripts": {
-        "build": "tsc",
-        "test": "jest",
-        "lint": "eslint src/**/*.ts"
+        "build": "tsup src/index.ts --format esm --dts",
+        "dev": "tsup src/index.ts --format esm --dts --watch",
+        "lint": "eslint --fix  --cache .",
+        "test": "jest"
     },
     "dependencies": {
         "@elizaos/core": "workspace:*"

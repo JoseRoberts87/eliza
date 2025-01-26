@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { EmailClient } from "../index";
 import EmailTemplates from "email-templates";
-import { UUID, Memory, State } from "@elizaos/core";
+import { UUID, Memory, State, HandlerCallback } from "@elizaos/core";
 
 vi.mock("email-templates", () => {
     return {
@@ -122,32 +122,40 @@ describe("EmailClient", () => {
         const mockState: State = {
             bio: "",
             lore: "",
-            messageDirections: [],
-            postDirections: [],
+            messageDirections: "",
+            postDirections: "",
             memories: [],
             posts: [],
             rooms: [],
             users: [],
+            roomId: "12345678-1234-1234-1234-123456789015" as UUID,
+            actors: "",
+            recentMessages: "",
+            recentMessagesData: [],
+        };
+
+        const mockCallback: HandlerCallback = async () => {
+            return Promise.resolve([]);
         };
 
         it("should process valid email messages", async () => {
             const message: Memory = {
                 id: "12345678-1234-1234-1234-123456789012" as UUID,
                 userId: "12345678-1234-1234-1234-123456789013" as UUID,
-                agentId: "test-agent",
-                roomId: "test-room",
+                agentId: "12345678-1234-1234-1234-123456789014" as UUID,
+                roomId: "12345678-1234-1234-1234-123456789015" as UUID,
                 content: {
                     to: "test@example.com",
                     subject: "Test Email",
                     text: "Hello, World!",
                 },
                 createdAt: Date.now(),
-            } as Memory;
+            };
 
             const promise = emailClient.handleMessage(
                 message,
                 mockState,
-                () => {}
+                mockCallback
             );
             await vi.advanceTimersByTimeAsync(100);
             await promise;
@@ -161,16 +169,16 @@ describe("EmailClient", () => {
             const message: Memory = {
                 id: "12345678-1234-1234-1234-123456789012" as UUID,
                 userId: "12345678-1234-1234-1234-123456789013" as UUID,
-                agentId: "test-agent",
-                roomId: "test-room",
+                agentId: "12345678-1234-1234-1234-123456789014" as UUID,
+                roomId: "12345678-1234-1234-1234-123456789015" as UUID,
                 content: {
                     text: "Hello, World!",
                 },
                 createdAt: Date.now(),
-            } as Memory;
+            };
 
             await expect(
-                emailClient.handleMessage(message, mockState, () => {})
+                emailClient.handleMessage(message, mockState, mockCallback)
             ).rejects.toThrow('Email requires "to" and "subject" fields');
         });
     });
@@ -212,6 +220,113 @@ describe("EmailClient", () => {
                 expect(failedEmail).toBeDefined();
                 expect(failedEmail?.error).toBe("SMTP error");
             }
+        });
+    });
+
+    describe("Application Response System", () => {
+        it("should handle template-based acceptance email", async () => {
+            const email = {
+                to: "applicant@example.com",
+                subject: "Application Accepted",
+                template: "acceptance",
+                text: "Base text content",
+                context: {
+                    applicantName: "John Doe",
+                    programName: "Startup Accelerator",
+                    nextSteps: ["Complete onboarding", "Schedule orientation"],
+                },
+            };
+
+            const promise = emailClient.sendEmail(email);
+            await vi.advanceTimersByTimeAsync(100);
+            const memory = await promise;
+
+            expect(transportMock.sendMail).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    to: email.to,
+                    subject: email.subject,
+                    html: "<h1>Test</h1>", // This comes from the mocked EmailTemplates
+                })
+            );
+            expect(memory).toEqual(
+                expect.objectContaining({
+                    userId: runtimeMock.agentId,
+                    agentId: runtimeMock.agentId,
+                    roomId: email.to,
+                    content: expect.objectContaining(email),
+                })
+            );
+        });
+
+        it("should handle template-based rejection email", async () => {
+            const email = {
+                to: "applicant@example.com",
+                subject: "Application Status Update",
+                template: "rejection",
+                text: "Base text content",
+                context: {
+                    applicantName: "Jane Smith",
+                    feedback:
+                        "Strong application but not aligned with current focus",
+                },
+            };
+
+            const promise = emailClient.sendEmail(email);
+            await vi.advanceTimersByTimeAsync(100);
+            const memory = await promise;
+
+            expect(transportMock.sendMail).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    to: email.to,
+                    subject: email.subject,
+                    html: "<h1>Test</h1>", // This comes from the mocked EmailTemplates
+                })
+            );
+        });
+
+        it("should track application email delivery status", async () => {
+            const email = {
+                to: "applicant@example.com",
+                subject: "Application Status",
+                template: "status-update",
+                text: "Your application status has been updated",
+                context: {
+                    status: "under_review",
+                },
+            };
+
+            const promise = emailClient.sendEmail(email);
+            await vi.advanceTimersByTimeAsync(100);
+            const memory = await promise;
+
+            const status = await emailClient.getEmailStatus(memory.id);
+            expect(status).toBeDefined();
+            expect(status?.status).toBe("delivered");
+            expect(status?.sentAt).toBeDefined();
+            expect(status?.deliveredAt).toBeDefined();
+        });
+
+        it("should retry failed application emails", async () => {
+            transportMock.sendMail.mockRejectedValueOnce(
+                new Error("SMTP error")
+            );
+
+            const email = {
+                to: "applicant@example.com",
+                subject: "Important Application Update",
+                text: "Critical update about your application",
+            };
+
+            const promise = emailClient.sendEmail(email);
+            await vi.advanceTimersByTimeAsync(100);
+            await expect(promise).rejects.toThrow("SMTP error");
+
+            const status = await emailClient.getQueueStatus();
+            expect(status.failed).toBeGreaterThan(0);
+
+            emailClient.retryFailedEmails();
+            expect(emailClient.getQueueStatus().failed).toBe(0);
+            expect(emailClient.getQueueStatus().pending).toBeGreaterThan(0);
         });
     });
 });

@@ -145,26 +145,30 @@ export class EmailClient {
     }
 
     public async sendEmail(content: EmailContent): Promise<Memory> {
+        let currentQueueId = "";
         try {
-            const queueId = await this.queueManager.addToQueue(content);
+            currentQueueId = await this.queueManager.addToQueue(content);
 
             // Wait for the email to be processed
             return new Promise((resolve, reject) => {
                 const checkStatus = () => {
-                    const email = this.queueManager.getQueuedEmail(queueId);
-                    if (!email) {
+                    const queuedEmail =
+                        this.queueManager.getQueuedEmail(currentQueueId);
+                    if (!queuedEmail) {
                         // Email was removed from queue, meaning it was sent successfully
                         resolve({
-                            id: queueId as UUID,
+                            id: currentQueueId as UUID,
                             userId: this.runtime.agentId,
                             agentId: this.runtime.agentId,
                             roomId: content.to as UUID,
                             content,
                             createdAt: Date.now(),
                         });
-                    } else if (email.status === "failed") {
+                    } else if (queuedEmail.status === "failed") {
                         reject(
-                            new Error(email.error || "Failed to send email")
+                            new Error(
+                                queuedEmail.error || "Failed to send email"
+                            )
                         );
                     } else {
                         // Check again in 100ms
@@ -176,7 +180,11 @@ export class EmailClient {
                 checkStatus();
             });
         } catch (error) {
-            await this.updateEmailStatus(messageId, {
+            const emailId =
+                (content as { messageId?: string }).messageId ||
+                currentQueueId ||
+                "";
+            await this.updateEmailStatus(emailId, {
                 status: "failed",
                 error: error.message,
             });
@@ -186,7 +194,7 @@ export class EmailClient {
 
     public async handleMessage(
         message: Memory,
-        state: State,
+        _state: State,
         callback: HandlerCallback
     ): Promise<void> {
         const content = message.content as EmailContent;
@@ -196,6 +204,7 @@ export class EmailClient {
         }
 
         await this.sendEmail(content);
+        await callback({ text: "Email sent successfully" });
     }
 
     // Queue management methods
@@ -253,10 +262,11 @@ export class EmailClient {
             id: messageId as UUID,
             userId: this.runtime.agentId,
             agentId: this.runtime.agentId,
-            roomId: "email-tracking",
+            roomId: "email-tracking-room" as UUID,
             content: {
                 type: "email-status-update",
                 status: this.trackingMap.get(messageId),
+                text: `Email status update: ${status.status}`,
             },
             createdAt: Date.now(),
         });

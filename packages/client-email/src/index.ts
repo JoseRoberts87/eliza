@@ -34,12 +34,22 @@ export interface EmailContent extends Content {
     context?: Record<string, any>;
 }
 
+export interface EmailTrackingInfo {
+    messageId: string;
+    status: "delivered" | "failed" | "pending";
+    attempts: number;
+    sentAt?: Date;
+    deliveredAt?: Date;
+    error?: string;
+}
+
 export class EmailClient {
     private transporter: Transporter;
     private emailTemplates: EmailTemplates;
     private config: EmailClientConfig;
     private runtime: IAgentRuntime;
     private queueManager: QueueManager;
+    private trackingMap: Map<string, EmailTrackingInfo> = new Map();
 
     constructor(config: EmailClientConfig, runtime: IAgentRuntime) {
         this.config = config;
@@ -99,6 +109,12 @@ export class EmailClient {
             };
 
             await this.runtime.messageManager.createMemory(memory);
+
+            await this.updateEmailStatus(info.messageId, {
+                status: "delivered",
+                deliveredAt: new Date(),
+                sentAt: new Date(),
+            });
         });
 
         // Log events
@@ -160,7 +176,10 @@ export class EmailClient {
                 checkStatus();
             });
         } catch (error) {
-            console.error("Failed to send email:", error);
+            await this.updateEmailStatus(messageId, {
+                status: "failed",
+                error: error.message,
+            });
             throw error;
         }
     }
@@ -202,5 +221,44 @@ export class EmailClient {
         allEmails
             .filter((email) => email.status === "failed")
             .forEach((email) => this.queueManager.clearQueue());
+    }
+
+    public async getEmailStatus(
+        messageId: string
+    ): Promise<EmailTrackingInfo | undefined> {
+        return this.trackingMap.get(messageId);
+    }
+
+    public async getAllEmailStatuses(): Promise<EmailTrackingInfo[]> {
+        return Array.from(this.trackingMap.values());
+    }
+
+    private async updateEmailStatus(
+        messageId: string,
+        status: Partial<EmailTrackingInfo>
+    ): Promise<void> {
+        const existing = this.trackingMap.get(messageId) || {
+            messageId,
+            status: "pending",
+            attempts: 0,
+        };
+
+        this.trackingMap.set(messageId, {
+            ...existing,
+            ...status,
+        });
+
+        // Persist to runtime memory
+        await this.runtime.messageManager.createMemory({
+            id: messageId as UUID,
+            userId: this.runtime.agentId,
+            agentId: this.runtime.agentId,
+            roomId: "email-tracking",
+            content: {
+                type: "email-status-update",
+                status: this.trackingMap.get(messageId),
+            },
+            createdAt: Date.now(),
+        });
     }
 }

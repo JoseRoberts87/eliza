@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { EmailClient } from "../index";
-import { EmailTemplates } from "email-templates";
+import EmailTemplates from "email-templates";
+import { UUID, Memory, State } from "@elizaos/core";
 
 vi.mock("email-templates", () => {
     return {
@@ -85,6 +86,8 @@ describe("EmailClient", () => {
                 to: "test@example.com",
                 template: "welcome",
                 context: { name: "John" },
+                subject: "Welcome Email",
+                text: "Welcome to our platform",
             };
 
             const promise = emailClient.sendEmail(email);
@@ -116,10 +119,21 @@ describe("EmailClient", () => {
     });
 
     describe("handleMessage", () => {
+        const mockState: State = {
+            bio: "",
+            lore: "",
+            messageDirections: [],
+            postDirections: [],
+            memories: [],
+            posts: [],
+            rooms: [],
+            users: [],
+        };
+
         it("should process valid email messages", async () => {
-            const message = {
-                id: "test-id",
-                userId: "test-user",
+            const message: Memory = {
+                id: "12345678-1234-1234-1234-123456789012" as UUID,
+                userId: "12345678-1234-1234-1234-123456789013" as UUID,
                 agentId: "test-agent",
                 roomId: "test-room",
                 content: {
@@ -128,9 +142,13 @@ describe("EmailClient", () => {
                     text: "Hello, World!",
                 },
                 createdAt: Date.now(),
-            };
+            } as Memory;
 
-            const promise = emailClient.handleMessage(message, {}, () => {});
+            const promise = emailClient.handleMessage(
+                message,
+                mockState,
+                () => {}
+            );
             await vi.advanceTimersByTimeAsync(100);
             await promise;
 
@@ -140,20 +158,60 @@ describe("EmailClient", () => {
         });
 
         it("should throw error for invalid email messages", async () => {
-            const message = {
-                id: "test-id",
-                userId: "test-user",
+            const message: Memory = {
+                id: "12345678-1234-1234-1234-123456789012" as UUID,
+                userId: "12345678-1234-1234-1234-123456789013" as UUID,
                 agentId: "test-agent",
                 roomId: "test-room",
                 content: {
                     text: "Hello, World!",
                 },
                 createdAt: Date.now(),
-            };
+            } as Memory;
 
             await expect(
-                emailClient.handleMessage(message, {}, () => {})
+                emailClient.handleMessage(message, mockState, () => {})
             ).rejects.toThrow('Email requires "to" and "subject" fields');
+        });
+    });
+
+    describe("Email Tracking", () => {
+        it("should track email delivery status", async () => {
+            const email = {
+                to: "test@example.com",
+                subject: "Test Email",
+                text: "Hello, World!",
+            };
+
+            const memory = await emailClient.sendEmail(email);
+            const status = await emailClient.getEmailStatus(memory.id);
+
+            expect(status).toBeDefined();
+            expect(status?.status).toBe("delivered");
+            expect(status?.sentAt).toBeDefined();
+            expect(status?.deliveredAt).toBeDefined();
+        });
+
+        it("should track failed email attempts", async () => {
+            transportMock.sendMail.mockRejectedValueOnce(
+                new Error("SMTP error")
+            );
+
+            const email = {
+                to: "test@example.com",
+                subject: "Test Email",
+                text: "Hello, World!",
+            };
+
+            try {
+                await emailClient.sendEmail(email);
+            } catch (error) {
+                const statuses = await emailClient.getAllEmailStatuses();
+                const failedEmail = statuses.find((s) => s.status === "failed");
+
+                expect(failedEmail).toBeDefined();
+                expect(failedEmail?.error).toBe("SMTP error");
+            }
         });
     });
 });

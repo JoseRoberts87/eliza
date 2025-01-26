@@ -1,0 +1,38 @@
+{
+    "name": "@elizaos/client-email",
+    "version": "0.1.0",
+    "description": "Email client adapter for ElizaOS",
+    "main": "dist/index.js",
+    "module": "dist/index.mjs",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "tsup",
+        "dev": "tsup --watch",
+        "test": "vitest run",
+        "test:watch": "vitest watch",
+        "lint": "eslint ."
+    },
+    "dependencies": {
+        "@elizaos/core": "workspace:*",
+        "nodemailer": "^6.9.8",
+        "email-templates": "^11.1.1",
+        "handlebars": "^4.7.8"
+    },
+    "devDependencies": {
+        "@types/nodemailer": "^6.4.14",
+        "@types/email-templates": "^10.0.4",
+        "tsup": "^8.0.1",
+        "typescript": "^5.3.3",
+        "vitest": "^1.2.1",
+        "eslint": "^8.56.0"
+    },
+    "peerDependencies": {
+        "@elizaos/core": "workspace:*"
+    },
+    "publishConfig": {
+        "access": "public"
+    }
+}

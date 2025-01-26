@@ -1,101 +1,110 @@
 import nodemailer from "nodemailer";
-import type { Transporter } from "nodemailer";
 import EmailTemplates from "email-templates";
 import path from "path";
+import { IAgentRuntime, Memory, UUID } from "@elizaos/core";
 import {
-    IAgentRuntime,
-    Memory,
-    Content,
-    UUID,
-    HandlerCallback,
-    State,
-} from "@elizaos/core";
-import { QueueManager, QueueConfig } from "./queueManager";
-
-export interface EmailClientConfig {
-    smtp: {
-        host: string;
-        port: number;
-        secure: boolean;
-        auth: {
-            user: string;
-            pass: string;
-        };
-    };
-    from: string;
-    templatesDir?: string;
-    queue?: Partial<QueueConfig>;
-}
-
-export interface EmailContent extends Content {
-    subject: string;
-    to: string;
-    template?: string;
-    context?: Record<string, any>;
-}
-
-export interface EmailTrackingInfo {
-    messageId: string;
-    status: "delivered" | "failed" | "pending";
-    attempts: number;
-    sentAt?: Date;
-    deliveredAt?: Date;
-    error?: string;
-}
+    EmailClientConfig,
+    EmailContent,
+    EmailStatus,
+    ApplicationResult,
+} from "./types";
+import { QueueManager } from "./queueManager";
+import { TemplateManager } from "./templateManager";
+import { ContextGenerator } from "./contextGenerator";
 
 export class EmailClient {
-    private transporter: Transporter;
+    private transporter: nodemailer.Transporter;
     private emailTemplates: EmailTemplates;
+    private templateManager: TemplateManager;
+    private contextGenerator: ContextGenerator;
+    public queueManager: QueueManager;
     private config: EmailClientConfig;
     private runtime: IAgentRuntime;
-    private queueManager: QueueManager;
-    private trackingMap: Map<string, EmailTrackingInfo> = new Map();
+    private statusMap: Map<string, EmailStatus> = new Map();
 
     constructor(config: EmailClientConfig, runtime: IAgentRuntime) {
         this.config = config;
         this.runtime = runtime;
         this.transporter = nodemailer.createTransport(config.smtp);
+        this.templateManager = new TemplateManager(
+            config.templatesDir || path.join(process.cwd(), "templates")
+        );
+        this.contextGenerator = new ContextGenerator();
+        this.queueManager = new QueueManager(config.queue);
 
         this.emailTemplates = new EmailTemplates({
             views: {
                 root:
                     config.templatesDir ||
                     path.join(process.cwd(), "templates"),
-                options: {
-                    extension: "hbs",
-                },
+                options: { extension: "hbs" },
             },
         });
 
-        this.queueManager = new QueueManager(config.queue);
         this.setupQueueHandlers();
     }
 
     private setupQueueHandlers(): void {
-        this.queueManager.on("process", async (queuedEmail) => {
-            let html: string;
-            const content = queuedEmail.content;
+        this.queueManager.on("process", async (email) => {
+            try {
+                const result = await this.transporter.sendMail(email.content);
+                await this.updateEmailStatus(result.messageId, {
+                    status: "delivered",
+                    deliveredAt: new Date(),
+                });
+                return result;
+            } catch (error) {
+                console.error("Failed to send email:", error);
+                await this.updateEmailStatus(email.id, {
+                    status: "failed",
+                    error:
+                        error instanceof Error ? error.message : String(error),
+                });
+                throw error;
+            }
+        });
 
+        this.queueManager.on("failed", async (email) => {
+            await this.updateEmailStatus(email.id, {
+                status: "failed",
+                error: email.error,
+            });
+        });
+    }
+
+    public async generateResponseEmail(
+        result: ApplicationResult
+    ): Promise<EmailContent> {
+        const context = await this.contextGenerator.generateContext(result);
+        return {
+            to: result.applicantEmail,
+            subject: `Application Status: ${result.status.toUpperCase()}`,
+            template: result.status === "accepted" ? "accepted" : "rejected",
+            context,
+            type: "application-response",
+        };
+    }
+
+    public async sendEmail(content: EmailContent): Promise<Memory> {
+        try {
+            let html = "";
             if (content.template) {
                 html = await this.emailTemplates.render(
                     content.template,
                     content.context || {}
                 );
-            } else {
-                html = content.text || "";
             }
 
             const mailOptions = {
                 from: this.config.from,
                 to: content.to,
                 subject: content.subject,
-                text: content.text,
-                html,
+                text: content.text || "",
+                html: html || content.text || "",
             };
 
             const info = await this.transporter.sendMail(mailOptions);
 
-            // Create a memory of the sent email
             const memory: Memory = {
                 id: info.messageId as UUID,
                 userId: this.runtime.agentId,
@@ -103,172 +112,62 @@ export class EmailClient {
                 roomId: content.to as UUID,
                 content: {
                     ...content,
-                    text: `Email sent: ${content.subject}\nTo: ${content.to}\n${content.text}`,
+                    type: content.type || "email",
+                    text:
+                        content.text ||
+                        `Email sent: ${content.subject}\nTo: ${content.to}`,
                 },
                 createdAt: Date.now(),
             };
 
             await this.runtime.messageManager.createMemory(memory);
-
             await this.updateEmailStatus(info.messageId, {
                 status: "delivered",
                 deliveredAt: new Date(),
-                sentAt: new Date(),
             });
-        });
 
-        // Log events
-        this.queueManager.on("queued", (email) => {
-            console.log(`Email queued: ${email.id}`);
-        });
-
-        this.queueManager.on("processing", (email) => {
-            console.log(`Processing email: ${email.id}`);
-        });
-
-        this.queueManager.on("completed", (email) => {
-            console.log(`Email sent successfully: ${email.id}`);
-        });
-
-        this.queueManager.on("failed", (email) => {
-            console.error(
-                `Email failed after ${email.attempts} attempts: ${email.id}`,
-                email.error
-            );
-        });
-
-        this.queueManager.on("retry", (email) => {
-            console.log(
-                `Retrying email: ${email.id} (Attempt ${email.attempts})`
-            );
-        });
-    }
-
-    public async sendEmail(content: EmailContent): Promise<Memory> {
-        let currentQueueId = "";
-        try {
-            currentQueueId = await this.queueManager.addToQueue(content);
-
-            // Wait for the email to be processed
-            return new Promise((resolve, reject) => {
-                const checkStatus = () => {
-                    const queuedEmail =
-                        this.queueManager.getQueuedEmail(currentQueueId);
-                    if (!queuedEmail) {
-                        // Email was removed from queue, meaning it was sent successfully
-                        resolve({
-                            id: currentQueueId as UUID,
-                            userId: this.runtime.agentId,
-                            agentId: this.runtime.agentId,
-                            roomId: content.to as UUID,
-                            content,
-                            createdAt: Date.now(),
-                        });
-                    } else if (queuedEmail.status === "failed") {
-                        reject(
-                            new Error(
-                                queuedEmail.error || "Failed to send email"
-                            )
-                        );
-                    } else {
-                        // Check again in 100ms
-                        setTimeout(checkStatus, 100);
-                    }
-                };
-
-                // Start checking status
-                checkStatus();
-            });
+            return memory;
         } catch (error) {
-            const emailId =
-                (content as { messageId?: string }).messageId ||
-                currentQueueId ||
-                "";
-            await this.updateEmailStatus(emailId, {
+            console.error("Failed to send email:", error);
+            // Create a temporary ID for failed emails
+            const failedId = crypto.randomUUID();
+            await this.updateEmailStatus(failedId, {
                 status: "failed",
-                error: error.message,
+                error: error instanceof Error ? error.message : String(error),
             });
             throw error;
         }
     }
 
-    public async handleMessage(
-        message: Memory,
-        _state: State,
-        callback: HandlerCallback
-    ): Promise<void> {
-        const content = message.content as EmailContent;
-
-        if (!content.to || !content.subject) {
-            throw new Error('Email requires "to" and "subject" fields');
-        }
-
-        await this.sendEmail(content);
-        await callback({ text: "Email sent successfully" });
-    }
-
-    // Queue management methods
-    public getQueueStatus() {
-        return {
-            pending: this.queueManager.getPendingEmails().length,
-            failed: this.queueManager.getFailedEmails().length,
-            total: this.queueManager.getAllQueuedEmails().length,
-        };
-    }
-
-    public retryFailedEmails() {
-        const failedEmails = this.queueManager.getFailedEmails();
-        failedEmails.forEach((email) => {
-            email.status = "pending";
-            email.attempts = 0;
-            email.error = undefined;
-        });
-    }
-
-    public clearFailedEmails() {
-        const allEmails = this.queueManager.getAllQueuedEmails();
-        allEmails
-            .filter((email) => email.status === "failed")
-            .forEach((email) => this.queueManager.clearQueue());
-    }
-
     public async getEmailStatus(
         messageId: string
-    ): Promise<EmailTrackingInfo | undefined> {
-        return this.trackingMap.get(messageId);
+    ): Promise<EmailStatus | undefined> {
+        return this.statusMap.get(messageId);
     }
 
-    public async getAllEmailStatuses(): Promise<EmailTrackingInfo[]> {
-        return Array.from(this.trackingMap.values());
+    public async getAllEmailStatuses(): Promise<EmailStatus[]> {
+        return Array.from(this.statusMap.values());
     }
 
     private async updateEmailStatus(
         messageId: string,
-        status: Partial<EmailTrackingInfo>
+        status: Partial<EmailStatus>
     ): Promise<void> {
-        const existing = this.trackingMap.get(messageId) || {
-            messageId,
+        const currentStatus = this.statusMap.get(messageId) || {
+            messageId: messageId as UUID,
             status: "pending",
             attempts: 0,
         };
 
-        this.trackingMap.set(messageId, {
-            ...existing,
+        this.statusMap.set(messageId, {
+            ...currentStatus,
             ...status,
-        });
-
-        // Persist to runtime memory
-        await this.runtime.messageManager.createMemory({
-            id: messageId as UUID,
-            userId: this.runtime.agentId,
-            agentId: this.runtime.agentId,
-            roomId: "email-tracking-room" as UUID,
-            content: {
-                type: "email-status-update",
-                status: this.trackingMap.get(messageId),
-                text: `Email status update: ${status.status}`,
-            },
-            createdAt: Date.now(),
+            attempts:
+                status.status === "failed"
+                    ? currentStatus.attempts + 1
+                    : currentStatus.attempts,
         });
     }
 }
+
+export * from "./types";

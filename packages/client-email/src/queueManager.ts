@@ -19,23 +19,20 @@ export interface QueueConfig {
 }
 
 export class QueueManager extends EventEmitter {
-    private queue: Map<string, QueuedEmail>;
-    private config: QueueConfig;
-    private processing: boolean;
-    private activeCount: number;
+    private queue: Map<string, QueuedEmail> = new Map();
+    private processing: boolean = false;
     private processingInterval?: NodeJS.Timeout;
+    private activeCount: number = 0;
+    private config: QueueConfig;
 
     constructor(config: Partial<QueueConfig> = {}) {
         super();
-        this.queue = new Map();
         this.config = {
             maxAttempts: config.maxAttempts || 3,
-            retryDelay: config.retryDelay || 5 * 60 * 1000, // 5 minutes
+            retryDelay: config.retryDelay || 1000,
             maxConcurrent: config.maxConcurrent || 5,
-            processInterval: config.processInterval || 1000, // 1 second
+            processInterval: config.processInterval || 1000,
         };
-        this.processing = false;
-        this.activeCount = 0;
     }
 
     public async addToQueue(content: EmailContent): Promise<string> {
@@ -50,11 +47,6 @@ export class QueueManager extends EventEmitter {
 
         this.queue.set(id, queuedEmail);
         this.emit("queued", queuedEmail);
-
-        // Start processing if not already started
-        if (!this.processing) {
-            this.startProcessing();
-        }
 
         return id;
     }
@@ -79,76 +71,127 @@ export class QueueManager extends EventEmitter {
         );
     }
 
-    public startProcessing(): void {
-        if (this.processing) return;
-
-        this.processing = true;
-        this.processingInterval = setInterval(
-            () => this.processQueue(),
-            this.config.processInterval
-        );
-    }
-
-    public stopProcessing(): void {
-        this.processing = false;
-        if (this.processingInterval) {
-            clearInterval(this.processingInterval);
+    public async processQueue(): Promise<void> {
+        if (!this.processing) {
+            return;
         }
-    }
 
-    private async processQueue(): Promise<void> {
-        if (this.activeCount >= this.config.maxConcurrent) return;
+        // Don't start new processing if we're at the limit
+        if (this.activeCount >= this.config.maxConcurrent) {
+            return;
+        }
 
-        const pendingEmails = this.getPendingEmails()
-            .filter((email) => {
-                if (!email.lastAttempt) return true;
-                return (
-                    Date.now() - email.lastAttempt.getTime() >=
-                    this.config.retryDelay
-                );
-            })
-            .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+        const pendingEmails = this.getPendingEmails();
+        if (pendingEmails.length === 0) {
+            return;
+        }
 
-        for (const email of pendingEmails) {
-            if (this.activeCount >= this.config.maxConcurrent) break;
+        // Only process up to maxConcurrent - activeCount emails
+        const toProcess = pendingEmails.slice(
+            0,
+            this.config.maxConcurrent - this.activeCount
+        );
+
+        // Process each email sequentially to maintain strict control
+        for (const email of toProcess) {
+            if (!this.processing) {
+                break;
+            }
 
             this.activeCount++;
-            email.status = "processing";
-            this.emit("processing", email);
-
             try {
                 const listeners = this.listeners("process");
                 if (listeners.length === 0) {
                     throw new Error("No process handler registered");
                 }
 
-                // Call all process handlers and wait for them to complete
-                await Promise.all(listeners.map((listener) => listener(email)));
+                const emailToProcess = this.queue.get(email.id);
+                if (!emailToProcess) {
+                    this.activeCount--;
+                    continue;
+                }
 
-                email.status = "completed";
-                this.emit("completed", email);
+                emailToProcess.status = "processing";
+                this.emit("processing", emailToProcess);
+
+                // Process one listener at a time
+                for (const listener of listeners) {
+                    await listener(emailToProcess);
+                }
+
+                emailToProcess.status = "completed";
+                this.emit("completed", emailToProcess);
                 this.queue.delete(email.id);
             } catch (error) {
-                email.attempts++;
-                email.lastAttempt = new Date();
-                email.error =
+                const emailToProcess = this.queue.get(email.id);
+                if (!emailToProcess) {
+                    this.activeCount--;
+                    continue;
+                }
+
+                emailToProcess.attempts++;
+                emailToProcess.lastAttempt = new Date();
+                emailToProcess.error =
                     error instanceof Error ? error.message : String(error);
 
-                if (email.attempts >= this.config.maxAttempts) {
-                    email.status = "failed";
-                    this.emit("failed", email);
+                if (emailToProcess.attempts >= this.config.maxAttempts) {
+                    emailToProcess.status = "failed";
+                    this.emit("failed", emailToProcess);
+                    this.queue.delete(email.id);
                 } else {
-                    email.status = "pending";
-                    this.emit("retry", email);
+                    emailToProcess.status = "pending";
+                    this.emit("retry", emailToProcess);
                 }
             } finally {
                 this.activeCount--;
             }
         }
+
+        // Schedule next batch if we have more pending emails
+        const remainingEmails = this.getPendingEmails();
+        if (this.processing && remainingEmails.length > 0) {
+            // If any email has attempts, it's a retry
+            const hasRetries = remainingEmails.some(
+                (email) => email.attempts > 0
+            );
+            const delay = hasRetries
+                ? this.config.retryDelay
+                : this.config.processInterval;
+
+            setTimeout(() => {
+                if (this.processing) {
+                    this.processQueue().catch((err) => this.emit("error", err));
+                }
+            }, delay);
+        }
+    }
+
+    public startProcessing(): void {
+        if (this.processing) return;
+
+        this.processing = true;
+        if (this.processingInterval) {
+            clearInterval(this.processingInterval);
+            this.processingInterval = undefined;
+        }
+
+        // Initial process
+        this.processQueue().catch((error) => {
+            this.emit("error", error);
+        });
+    }
+
+    public stopProcessing(): void {
+        this.processing = false;
+        if (this.processingInterval) {
+            clearInterval(this.processingInterval);
+            this.processingInterval = undefined;
+        }
+        this.activeCount = 0;
     }
 
     public clearQueue(): void {
         this.queue.clear();
-        this.emit("cleared");
+        this.stopProcessing();
     }
 }

@@ -1,11 +1,14 @@
 import { EmailClient } from "../index";
 import { ContextGenerator } from "../contextGenerator";
-import { TemplateValidator } from "../templateValidator";
+import { TemplateManager } from "../templateManager";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import nodemailer from "nodemailer";
 
 describe("Email System Integration", () => {
     let emailClient: EmailClient;
     let contextGenerator: ContextGenerator;
-    let templateValidator: TemplateValidator;
+    let templateManager: TemplateManager;
+    let transportMock: any;
 
     const mockConfig = {
         smtp: {
@@ -18,64 +21,89 @@ describe("Email System Integration", () => {
             },
         },
         from: "test@example.com",
+        templatesDir: "./templates",
     };
 
     const mockRuntime = {
         messageManager: {
-            createMemory: jest.fn(),
-            getMemory: jest.fn(),
+            createMemory: vi.fn(),
+            getMemory: vi.fn(),
         },
         agentId: "test-agent",
-    } as any; // Type assertion to avoid runtime type conflicts
+    } as any;
 
     beforeEach(() => {
+        // Mock nodemailer createTransport
+        transportMock = {
+            sendMail: vi
+                .fn()
+                .mockResolvedValue({ messageId: "test-message-id" }),
+        };
+        vi.spyOn(nodemailer, "createTransport").mockReturnValue(transportMock);
+
         emailClient = new EmailClient(mockConfig, mockRuntime);
         contextGenerator = new ContextGenerator();
-        templateValidator = new TemplateValidator();
+        templateManager = new TemplateManager(mockConfig.templatesDir);
     });
 
     it("should process a complete accepted application flow", async () => {
         const application = {
             id: "123",
-            name: "John Doe",
-            email: "john@example.com",
-            reviewScore: 85,
+            status: "accepted",
+            score: 85,
+            reviewDate: new Date(),
+            reviewerId: "AI-001",
+            applicantEmail: "john@example.com",
             strengths: ["Innovation"],
-            reviewNotes: ["Strong technical background"],
+            nextSteps: ["Schedule onboarding call", "Complete paperwork"],
         };
 
-        const context = await contextGenerator.generateContext(application);
         const memory = await emailClient.sendEmail({
             template: "accepted",
-            context,
-            to: application.email,
+            context: await contextGenerator.generateContext(application),
+            to: application.applicantEmail,
             subject: "Your Application Status",
             text: "This is a fallback plain text",
         });
 
+        expect(transportMock.sendMail).toHaveBeenCalledWith(
+            expect.objectContaining({
+                to: application.applicantEmail,
+                subject: "Your Application Status",
+            })
+        );
+
         const status = await emailClient.getEmailStatus(memory.id);
-        expect(status.status).toBe("delivered");
+        expect(status?.status).toBe("delivered");
     });
 
     it("should process a complete rejected application flow", async () => {
         const application = {
             id: "124",
-            name: "Jane Smith",
-            email: "jane@example.com",
-            reviewScore: 45,
-            reviewNotes: ["Insufficient market validation"],
+            status: "rejected",
+            score: 45,
+            reviewDate: new Date(),
+            reviewerId: "AI-001",
+            applicantEmail: "jane@example.com",
+            feedback: "Insufficient market validation",
         };
 
-        const context = await contextGenerator.generateContext(application);
         const memory = await emailClient.sendEmail({
             template: "rejected",
-            context,
-            to: application.email,
+            context: await contextGenerator.generateContext(application),
+            to: application.applicantEmail,
             subject: "Application Status Update",
             text: "This is a fallback plain text",
         });
 
+        expect(transportMock.sendMail).toHaveBeenCalledWith(
+            expect.objectContaining({
+                to: application.applicantEmail,
+                subject: "Application Status Update",
+            })
+        );
+
         const status = await emailClient.getEmailStatus(memory.id);
-        expect(status.status).toBe("delivered");
+        expect(status?.status).toBe("delivered");
     });
 });

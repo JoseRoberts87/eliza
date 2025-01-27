@@ -3,7 +3,7 @@
     "name": "Stacey",
     "modelProvider": "openai",
     "clients": [],
-    "plugins": [],
+    "plugins": ["form-review"],
     "settings": {
         "secrets": {}
     },

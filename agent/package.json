@@ -72,7 +72,7 @@
   		"@elizaos/plugin-massa": "workspace:*",
   		"@elizaos/plugin-nft-generation": "workspace:*",
   		"@elizaos/plugin-node": "workspace:*",
-      "@elizaos/plugin-quick-intel": "workspace:*",
+        "@elizaos/plugin-quick-intel": "workspace:*",
   		"@elizaos/plugin-solana": "workspace:*",
   		"@elizaos/plugin-injective": "workspace:*",
   		"@elizaos/plugin-solana-agent-kit": "workspace:*",
@@ -141,6 +141,7 @@
         "@elizaos/plugin-dcap": "workspace:*",
         "@elizaos/plugin-form": "workspace:*",
 		"@elizaos/plugin-ankr": "workspace:*",
+		"@elizaos/plugin-form-review": "workspace:*",
   		"readline": "1.3.0",
   		"ws": "8.18.0",
   		"yargs": "17.7.2"

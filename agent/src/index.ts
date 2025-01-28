@@ -143,6 +143,9 @@ import { ankrPlugin } from "@elizaos/plugin-ankr";
 import { formPlugin } from "@elizaos/plugin-form";
 import { MongoClient } from "mongodb";
 import { quickIntelPlugin } from "@elizaos/plugin-quick-intel"
+import { formReviewPlugin } from "@elizaos/plugin-form-review";
+
+import {mainCharacter} from "./mainCharacter";
 
 const __filename = fileURLToPath(import.meta.url) // get the resolved path to the file
 const __dirname = path.dirname(__filename) // get the name of the directory
@@ -415,7 +418,7 @@ export async function loadCharacters(charactersArg: string): Promise<Character[]
 
 	if (loadedCharacters.length === 0) {
 		elizaLogger.info("No characters found, using default character")
-		loadedCharacters.push(defaultCharacter)
+		loadedCharacters.push(mainCharacter)
 	}
 
 	return loadedCharacters
@@ -797,6 +800,7 @@ export async function createAgent(character: Character, db: IDatabaseAdapter, ca
             parseBooleanFromText(getSecret(character, "EMAIL_AUTOMATION_ENABLED")) ? emailAutomationPlugin : null,
 			getSecret(character, "IQ_WALLET_ADDRESS") && getSecret(character, "IQSOlRPC") ? elizaCodeinPlugin : null,
 			bootstrapPlugin,
+			formReviewPlugin,
 			getSecret(character, "CDP_API_KEY_NAME") && getSecret(character, "CDP_API_KEY_PRIVATE_KEY") && getSecret(character, "CDP_AGENT_KIT_NETWORK") ? agentKitPlugin : null,
 			getSecret(character, "DEXSCREENER_API_KEY") ? dexScreenerPlugin : null,
 			getSecret(character, "FOOTBALL_API_KEY") ? footballPlugin : null,
@@ -1035,7 +1039,7 @@ const startAgents = async () => {
 	let serverPort = Number.parseInt(settings.SERVER_PORT || "3000")
 	const args = parseArguments()
 	const charactersArg = args.characters || args.character
-	let characters = [defaultCharacter]
+	let characters = [mainCharacter]
 
 	if (process.env.IQ_WALLET_ADDRESS && process.env.IQSOlRPC) {
 		characters = await loadCharacterFromOnchain()

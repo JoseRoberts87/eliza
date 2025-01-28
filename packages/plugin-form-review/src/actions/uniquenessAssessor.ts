@@ -40,6 +40,8 @@ Compare with existing applications in memory to:
 - Assess market positioning
 - Evaluate technical differentiation`;
 
+elizaLogger.info("ASSESS_UNIQUENESS loaded");
+
 export const uniquenessAssessorAction: Action = {
     name: "ASSESS_UNIQUENESS",
     similes: ["CHECK_UNIQUENESS", "EVALUATE_INNOVATION", "ANALYZE_NOVELTY"],
@@ -48,10 +50,11 @@ export const uniquenessAssessorAction: Action = {
 
     validate: async (runtime: IAgentRuntime, message: Memory) => {
         // Validate that we have access to the memory system for comparison
-        const memoryManager = runtime.getMemoryManager(
-            "uniqueness_assessments"
-        );
-        return !!memoryManager;
+        // const memoryManager = runtime.getMemoryManager(
+        //     "uniqueness_assessments"
+        // );
+        // return !!memoryManager;
+        return true;
     },
 
     handler: async (
@@ -61,7 +64,7 @@ export const uniquenessAssessorAction: Action = {
         options?: { [key: string]: unknown },
         callback?: HandlerCallback
     ): Promise<unknown> => {
-        elizaLogger.info("ASSESS_UNIQUENESS");
+        elizaLogger.info("ASSESS_UNIQUENESS called");
 
         if (!state || !callback) {
             return;

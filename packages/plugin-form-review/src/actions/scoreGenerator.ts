@@ -34,6 +34,8 @@ const normalizeScore = (score: number): number => {
     return Math.min(Math.max(score, 0), 100);
 };
 
+elizaLogger.info("GENERATE_SCORE loaded");
+
 export const scoreGeneratorAction: Action = {
     name: "SCORE_GENERATOR",
     similes: ["GENERATE_SCORE", "CALCULATE_SCORE", "EVALUATE_APPLICATION"],
@@ -42,12 +44,14 @@ export const scoreGeneratorAction: Action = {
 
     validate: async (runtime: IAgentRuntime, message: Memory) => {
         // Validate that we have the necessary data in the message content
-        const content = message.content as Content;
-        return !!(
-            content.uniquenessScore &&
-            content.completionScore &&
-            content.qualityScore
-        );
+        // const content = message.content as Content;
+        // return !!(
+        //     content.uniquenessScore &&
+        //     content.completionScore &&
+        //     content.qualityScore
+        // );
+
+        return true;
     },
 
     handler: async (
@@ -57,7 +61,7 @@ export const scoreGeneratorAction: Action = {
         options?: any,
         callback?: HandlerCallback
     ) => {
-        elizaLogger.info("GENERATE_SCORE");
+        elizaLogger.info("GENERATE_SCORE called");
 
         try {
             const content = message.content as Content & {

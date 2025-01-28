@@ -48,6 +48,8 @@ Answer: {{answer}}
 Provide a detailed analysis with specific scores and actionable feedback.
 `;
 
+elizaLogger.info("ANALYZE_ADDITIONAL_QUESTIONS loaded");
+
 export const questionsAnalyzerAction: Action = {
     name: "ANALYZE_ADDITIONAL_QUESTIONS",
     similes: ["REVIEW_QUESTIONS", "EVALUATE_ANSWERS", "ASSESS_RESPONSES"],
@@ -56,8 +58,9 @@ export const questionsAnalyzerAction: Action = {
 
     validate: async (runtime: IAgentRuntime, message: Memory) => {
         // Validate that we have question and answer content to analyze
-        const content = message.content as Content;
-        return !!(content.question && content.answer);
+        // const content = message.content as Content;
+        // return !!(content.question && content.answer);
+        return true;
     },
 
     handler: async (
@@ -67,7 +70,7 @@ export const questionsAnalyzerAction: Action = {
         _options?: any,
         callback?: HandlerCallback
     ) => {
-        elizaLogger.info("ANALYZE_ADDITIONAL_QUESTIONS");
+        elizaLogger.info("ANALYZE_ADDITIONAL_QUESTIONS called");
 
         try {
             const content = message.content as Content;

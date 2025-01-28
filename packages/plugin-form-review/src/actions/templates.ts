@@ -4,28 +4,83 @@ export const formCompletionTemplate = `
 You are validating a VC Accelerator application form. Please check the following aspects:
 
 ## Required Fields
-- Company name
-- Company description (min 50 characters)
-- At least one founder with:
-  - Name
-  - Email
-  - Role
+1. Company Information:
+   - Company Name (Short text field, required)
+   - Website/Demo URL (URL field, optional)
+   * Validation: Standard URL format, allow empty
 
-## Optional Fields
-- Pitch deck URL
-- Additional information
+2. Solution Description:
+   - One-sentence description (Short text field, required)
+   * Validation: 140 character limit
 
-## Recent Messages
-{{recentMessages}}
+3. Problem Statement:
+   - What specific problem are you solving? (Text area, required)
+   * Validation: 500 character limit
 
-## Current Application
-{{content}}
+4. Product Stage:
+   - Current product stage (Radio buttons, required)
+     * Concept
+     * MVP
+     * Beta
+     * Live
+   * Validation: Single selection only
 
-Please analyze the application and provide:
-1. Whether the form is complete
-2. Any missing required fields
-3. Any validation errors
-4. A completion score (0-100)
+5. Customer Base:
+   - Number of paying customers (Number field, required)
+   * Validation: Non-negative integers only
+
+6. Revenue Metrics:
+   - Monthly recurring revenue (Currency field, optional)
+   * Validation: Currency format, allow empty
+   * Display: Include currency symbol ($)
+
+7. Technical Team:
+   - Current technical team composition (Multiple choice checkboxes, required)
+     * Backend Developer
+     * Frontend Developer
+     * Full Stack Developer
+     * DevOps Engineer
+     * Data Scientist
+     * No technical team yet
+     * Other (with text field)
+   * Validation: At least one option must be selected
+
+8. Technical Leadership:
+   - Do you have a technical co-founder? (Radio buttons, required)
+     * Yes
+     * No
+   * Validation: Single selection only
+
+9. Technical Requirements:
+   - What are your most critical technical needs? (Multiple select dropdown, required)
+     * Frontend Development
+     * Backend Development
+     * Mobile Development
+     * DevOps/Infrastructure
+     * Data Engineering
+     * Security Implementation
+     * UI/UX Design
+     * Other (with text field)
+   * Validation: Select up to 3 options
+
+10. Competition Analysis:
+    - Top 3 competitors (Three short text fields)
+      * Competitor 1 (required)
+      * Competitor 2 (optional)
+      * Competitor 3 (optional)
+    - Key differentiator (Text area, required)
+    * Validation: 300 character limit for differentiator
+
+11. Developer Impact:
+    - How would additional developers accelerate your timeline? (Text area, required)
+    * Validation: 500 character limit
+
+12. Milestone Planning:
+    - Technical milestones for first 3 months (Three short text fields, all required)
+      * Milestone 1
+      * Milestone 2
+      * Milestone 3
+    * Validation: Each milestone limited to 200 characters
 `;
 
 export const questionAnalysisTemplate = `

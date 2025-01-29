@@ -143,7 +143,6 @@ import { ankrPlugin } from "@elizaos/plugin-ankr";
 import { formPlugin } from "@elizaos/plugin-form";
 import { MongoClient } from "mongodb";
 import { quickIntelPlugin } from "@elizaos/plugin-quick-intel"
-import { formReviewPlugin } from "@elizaos/plugin-form-review";
 
 import {mainCharacter} from "./mainCharacter";
 
@@ -800,7 +799,6 @@ export async function createAgent(character: Character, db: IDatabaseAdapter, ca
             parseBooleanFromText(getSecret(character, "EMAIL_AUTOMATION_ENABLED")) ? emailAutomationPlugin : null,
 			getSecret(character, "IQ_WALLET_ADDRESS") && getSecret(character, "IQSOlRPC") ? elizaCodeinPlugin : null,
 			bootstrapPlugin,
-			formReviewPlugin,
 			getSecret(character, "CDP_API_KEY_NAME") && getSecret(character, "CDP_API_KEY_PRIVATE_KEY") && getSecret(character, "CDP_AGENT_KIT_NETWORK") ? agentKitPlugin : null,
 			getSecret(character, "DEXSCREENER_API_KEY") ? dexScreenerPlugin : null,
 			getSecret(character, "FOOTBALL_API_KEY") ? footballPlugin : null,

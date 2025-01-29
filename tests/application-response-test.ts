@@ -215,12 +215,25 @@ class InMemoryDatabaseAdapter {
     async clearKnowledge(agentId: UUID, shared?: boolean): Promise<void> {}
 }
 
+// Create a minimal mock runtime for email testing
+const mockRuntime = {
+    agentId: "test-agent" as UUID,
+    character: JSON.parse(
+        readFileSync(
+            path.join(process.cwd(), "characters", "stacey.character.json"),
+            "utf-8"
+        )
+    ),
+    messageManager: undefined as unknown as IMemoryManager, // Will be set after creating MockMemoryManager
+    modelProvider: ModelProviderName.OPENAI,
+};
+
 class MockMemoryManager implements IMemoryManager {
-    runtime = null;
+    runtime = mockRuntime as unknown as IAgentRuntime;
     tableName = "messages";
 
-    async createMemory(memory: Memory): Promise<Memory> {
-        return memory;
+    async createMemory(memory: Memory, unique?: boolean): Promise<void> {
+        // Just simulate storing the memory without returning it
     }
 
     async searchMemories() {
@@ -264,18 +277,8 @@ class MockMemoryManager implements IMemoryManager {
     }
 }
 
-// Create a minimal mock runtime for email testing
-const mockRuntime = {
-    agentId: "test-agent" as UUID,
-    character: JSON.parse(
-        readFileSync(
-            path.join(process.cwd(), "characters", "stacey.character.json"),
-            "utf-8"
-        )
-    ),
-    messageManager: new MockMemoryManager(),
-    modelProvider: ModelProviderName.OPENAI,
-};
+// Set the message manager after creating the class
+mockRuntime.messageManager = new MockMemoryManager();
 
 async function runTest() {
     // Test application data

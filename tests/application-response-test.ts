@@ -220,7 +220,7 @@ const mockRuntime = {
     agentId: "test-agent" as UUID,
     character: JSON.parse(
         readFileSync(
-            path.join(process.cwd(), "characters", "stacey.character.json"),
+            path.join(process.cwd(), "characters", "yolanda.character.json"),
             "utf-8"
         )
     ),

@@ -1,72 +1,75 @@
-<html>
-    <head>
-        <meta charset="utf-8" />
-        <style>
-            /* Modern, clean styling */ body { font-family: Arial, sans-serif;
-            line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto;
-            padding: 20px; background-color: #f9f9f9; } .container {
-            background-color: #ffffff; padding: 30px; border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); } .header { text-align:
-            center; margin-bottom: 30px; padding-bottom: 20px; border-bottom:
-            2px solid #4CAF50; } .logo { max-width: 150px; margin-bottom: 20px;
-            } h1 { color: #2E7D32; font-size: 24px; margin: 0; } .content {
-            margin-bottom: 30px; } .highlight { background-color: #E8F5E9;
-            padding: 15px; border-radius: 4px; margin: 20px 0; } .next-steps {
-            background-color: #F5F5F5; padding: 20px; border-radius: 4px; }
-            .next-steps h2 { color: #1B5E20; font-size: 18px; margin-top: 0; }
-            ul { padding-left: 20px; } li { margin-bottom: 10px; } .footer {
-            text-align: center; margin-top: 30px; padding-top: 20px; border-top:
-            1px solid #E0E0E0; color: #666; font-size: 14px; } .button {
-            display: inline-block; background-color: #4CAF50; color: white;
-            padding: 12px 25px; text-decoration: none; border-radius: 4px;
-            margin-top: 20px; } .button:hover { background-color: #45a049; }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <div class="header">
-                <h1>Application Accepted! 🎉</h1>
+<div
+    style="font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; line-height: 1.6; color: #333333; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #F8F8F8;"
+>
+    <div
+        style="background-color: #FFFFFF; padding: 40px; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.06);"
+    >
+        <div
+            style="text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 2px solid #FF4500;"
+        >
+            <div
+                style="display: inline-block; background-color: #FFF1EC; color: #FF4500; padding: 4px 12px; border-radius: 16px; font-size: 14px; margin-bottom: 16px;"
+            >Yconic VC Accelerator</div>
+            <h1
+                style="color: #FF4500; font-size: 28px; font-weight: 700; margin: 0; letter-spacing: -0.5px;"
+            >Welcome to Our Founder Community! 🚀</h1>
+        </div>
+
+        <div style="margin-bottom: 40px;">
+            <p>Dear {{applicantName}},</p>
+
+            <p>I'm Yolanda, Head of HR at Yconic VC Accelerator, and I'm
+                personally thrilled to inform you that your application has been
+                <strong style="color: #FF4500;">accepted</strong>! Our
+                AI-powered evaluation system, combined with our team's
+                assessment, identified exceptional potential in your vision and
+                founding team.</p>
+
+            <div
+                style="background-color: #FFF1EC; padding: 24px; border-radius: 12px; margin: 24px 0; border-left: 4px solid #FF4500;"
+            >
+                <p><strong style="color: #FF4500;">Your Journey Details</strong></p>
+                <ul style="padding-left: 20px; margin: 16px 0;">
+                    <li style="margin-bottom: 12px;">Founder ID:
+                        {{applicationId}}</li>
+                    <li style="margin-bottom: 12px;">Team Assessment Score:
+                        {{reviewScore}}/100</li>
+                </ul>
             </div>
 
-            <div class="content">
-                <p>Dear {{applicantName}},</p>
+            <p>What particularly impressed us was your
+                {{highlightedStrength}}.
+                {{feedback}}
+                This aligns perfectly with the innovative founders we aim to
+                support in our accelerator program.</p>
 
-                <p>We are thrilled to inform you that your application to the
-                    Yconic VC Accelerator program has been
-                    <strong>accepted</strong>!</p>
-
-                <div class="highlight">
-                    <p><strong>Application Details:</strong></p>
-                    <ul>
-                        <li>Application ID: {{applicationId}}</li>
-                        <li>Review Score: {{reviewScore}}/100</li>
-                    </ul>
-                </div>
-
-                <p>Your application particularly impressed us with your
-                    {{highlightedStrength}}.
-                    {{feedback}}</p>
-
-                <div class="next-steps">
-                    <h2>🚀 Next Steps</h2>
-                    <ul>
-                        {{#each nextSteps}}
-                            <li>{{this}}</li>
-                        {{/each}}
-                    </ul>
-                </div>
-
-                <center>
-                    <a href="#" class="button">Schedule Initial Meeting</a>
-                </center>
+            <div
+                style="background: linear-gradient(145deg, #F8F8F8 0%, #FFF1EC 100%); padding: 24px; border-radius: 12px; margin: 32px 0;"
+            >
+                <h2 style="color: #FF4500; font-size: 20px; margin-top: 0;">🤝
+                    Let's Begin Your Journey</h2>
+                <ul style="padding-left: 20px; margin: 16px 0;">
+                    {{#each nextSteps}}
+                        <li style="margin-bottom: 12px;">{{this}}</li>
+                    {{/each}}
+                </ul>
             </div>
 
-            <div class="footer">
-                <p>Best regards,<br />
-                    The Yconic VC Accelerator Team</p>
-                <p><small>This is an automated message. Please do not reply
-                        directly to this email.</small></p>
+            <div style="text-align: center;">
+                <a
+                    href="#"
+                    style="display: inline-block; background-color: #FF4500; color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; margin-top: 24px; font-weight: 500; box-shadow: 0 4px 12px rgba(255,69,0,0.2);"
+                >Schedule Your Welcome Call →</a>
             </div>
         </div>
-    </body>
-</html>
+
+        <div
+            style="text-align: center; margin-top: 40px; padding-top: 24px; border-top: 1px solid #EEEEEE; color: #666666; font-size: 14px;"
+        >
+            <p>Looking forward to our collaboration,<br />Yolanda<br />Head of
+                HR, Yconic VC Accelerator</p>
+            <p><small>This acceptance is based on our comprehensive AI-driven
+                    evaluation process and team assessment.</small></p>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,40 @@
+{
+    "name": "@elizaos/plugin-form-review",
+    "version": "0.1.9-alpha.1",
+    "description": "Plugin for reviewing and analyzing VC Accelerator application forms",
+    "type": "module",
+    "main": "dist/index.js",
+    "module": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "exports": {
+        "./package.json": "./package.json",
+        ".": {
+            "import": {
+                "@elizaos/source": "./src/index.ts",
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            }
+        }
+    },
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "tsup --format esm --dts",
+        "dev": "tsup --format esm --dts --watch",
+        "lint": "eslint --fix  --cache .",
+        "test": "jest"
+    },
+    "dependencies": {
+        "@elizaos/core": "workspace:*",
+        "zod": "^3.22.4",
+        "tsup": "8.3.5"
+    },
+    "devDependencies": {
+        "@types/jest": "^29.5.12",
+        "@types/node": "^20.11.24",
+        "jest": "^29.7.0",
+        "typescript": "^5.3.3",
+        "ts-jest": "^29.1.2"
+    }
+} 

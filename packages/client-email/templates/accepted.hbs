@@ -1,23 +1,72 @@
-{{!
-{
-  "name": "Application Accepted",
-  "subject": "Congratulations - Your Application Has Been Accepted!"
-}
-}}
-Dear
-{{applicantName}}, We are delighted to inform you that your application to the
-Yconic VC Accelerator Program has been accepted!
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <style>
+            /* Modern, clean styling */ body { font-family: Arial, sans-serif;
+            line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto;
+            padding: 20px; background-color: #f9f9f9; } .container {
+            background-color: #ffffff; padding: 30px; border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); } .header { text-align:
+            center; margin-bottom: 30px; padding-bottom: 20px; border-bottom:
+            2px solid #4CAF50; } .logo { max-width: 150px; margin-bottom: 20px;
+            } h1 { color: #2E7D32; font-size: 24px; margin: 0; } .content {
+            margin-bottom: 30px; } .highlight { background-color: #E8F5E9;
+            padding: 15px; border-radius: 4px; margin: 20px 0; } .next-steps {
+            background-color: #F5F5F5; padding: 20px; border-radius: 4px; }
+            .next-steps h2 { color: #1B5E20; font-size: 18px; margin-top: 0; }
+            ul { padding-left: 20px; } li { margin-bottom: 10px; } .footer {
+            text-align: center; margin-top: 30px; padding-top: 20px; border-top:
+            1px solid #E0E0E0; color: #666; font-size: 14px; } .button {
+            display: inline-block; background-color: #4CAF50; color: white;
+            padding: 12px 25px; text-decoration: none; border-radius: 4px;
+            margin-top: 20px; } .button:hover { background-color: #45a049; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>Application Accepted! 🎉</h1>
+            </div>
 
-{{#if highlightedStrength}}
-    Your innovative approach and
-    {{highlightedStrength}}
-    particularly impressed our review team.
-{{/if}}
+            <div class="content">
+                <p>Dear {{applicantName}},</p>
 
-Next Steps:
-{{#each nextSteps}}
-    -
-    {{this}}
-{{/each}}
+                <p>We are thrilled to inform you that your application to the
+                    Yconic VC Accelerator program has been
+                    <strong>accepted</strong>!</p>
 
-We look forward to working with you! Best regards, The Yconic Team
+                <div class="highlight">
+                    <p><strong>Application Details:</strong></p>
+                    <ul>
+                        <li>Application ID: {{applicationId}}</li>
+                        <li>Review Score: {{reviewScore}}/100</li>
+                    </ul>
+                </div>
+
+                <p>Your application particularly impressed us with your
+                    {{highlightedStrength}}.
+                    {{feedback}}</p>
+
+                <div class="next-steps">
+                    <h2>🚀 Next Steps</h2>
+                    <ul>
+                        {{#each nextSteps}}
+                            <li>{{this}}</li>
+                        {{/each}}
+                    </ul>
+                </div>
+
+                <center>
+                    <a href="#" class="button">Schedule Initial Meeting</a>
+                </center>
+            </div>
+
+            <div class="footer">
+                <p>Best regards,<br />
+                    The Yconic VC Accelerator Team</p>
+                <p><small>This is an automated message. Please do not reply
+                        directly to this email.</small></p>
+            </div>
+        </div>
+    </body>
+</html>

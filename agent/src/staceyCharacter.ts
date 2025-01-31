@@ -4,17 +4,14 @@ import {
     defaultCharacter,
     Clients,
 } from "@elizaos/core";
-// import { formCompletionPlugin } from "@elizaos/plugin-form-review";
-// import { questionsAnalyzerPlugin } from "@elizaos/plugin-form-review";
-import { uniquenessAssessorPlugin } from "@elizaos/plugin-form-review";
-// import { scoreGeneratorPlugin } from "@elizaos/plugin-form-review";
+
 
 export const staceyCharacter: Character = {
     id: "550e8400-e29b-41d4-a716-446655440000",
     ...defaultCharacter,
     name: "Stacey",
     username: "stacey",
-    plugins: [uniquenessAssessorPlugin],
+    plugins: [],
     clients: [Clients.DIRECT],
     modelProvider: ModelProviderName.OPENAI,
     settings: {

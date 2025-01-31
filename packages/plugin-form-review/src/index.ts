@@ -4,18 +4,39 @@ import { questionsAnalyzerAction } from "./actions/questionsAnalyzer";
 import { uniquenessAssessorAction } from "./actions/uniquenessAssessor";
 import { scoreGeneratorAction } from "./actions/scoreGenerator";
 
-export const formReviewPlugin: Plugin = {
-    name: "form-review",
-    description: "Plugin for reviewing and analyzing VC Accelerator application forms",
-    actions: [
-        formCompletionAction,
-        questionsAnalyzerAction,
-        uniquenessAssessorAction,
-        scoreGeneratorAction
-    ],
-    // No providers, evaluators, or services needed for this plugin
+export const formCompletionPlugin: Plugin = {
+    name: "form-completion",
+    description: "Plugin for completing VC Accelerator application forms",
+    actions: [formCompletionAction],
+    evaluators: [],
 };
 
-elizaLogger.info("Loading form-review plugin");
+export const questionsAnalyzerPlugin: Plugin = {
+    name: "questions-analyzer",
+    description: "Plugin for analyzing VC Accelerator application questions",
+    actions: [questionsAnalyzerAction],
+    evaluators: [],
+};
 
-export default formReviewPlugin; 
+export const uniquenessAssessorPlugin: Plugin = {
+    name: "uniqueness-assessor",
+    description:
+        "Plugin for assessing the uniqueness of VC Accelerator application questions",
+    actions: [uniquenessAssessorAction],
+    evaluators: [],
+};
+
+export const scoreGeneratorPlugin: Plugin = {
+    name: "score-generator",
+    description:
+        "Plugin for generating scores for VC Accelerator application forms",
+    actions: [scoreGeneratorAction],
+    evaluators: [],
+};
+
+export default [
+    formCompletionPlugin,
+    questionsAnalyzerPlugin,
+    uniquenessAssessorPlugin,
+    scoreGeneratorPlugin,
+];

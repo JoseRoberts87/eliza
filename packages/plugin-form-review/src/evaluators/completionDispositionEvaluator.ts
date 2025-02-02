@@ -22,11 +22,11 @@ function isApplicationContent(content: any): content is ApplicationContent {
     return (
         content?.type === "application" &&
         typeof content?.text === "string" &&
-        content?.data?.disposition !== undefined
+        content?.data?.disposition === "received"
     );
 }
 
-const completionDispositionEvaluator: Evaluator = {
+export const completionDispositionEvaluator: Evaluator = {
     name: "COMPLETION_DISPOSITION_EVALUATOR",
     similes: ["FORM_COMPLETION_CHECK", "DISPOSITION_VALIDATOR"],
     description: "Evaluates if an application has been properly dispositioned by John and routes complete applications to David",
@@ -114,12 +114,12 @@ const completionDispositionEvaluator: Evaluator = {
                 }
             ],
             outcome: `\`\`\`json
-{
-    "score": 1,
-    "reason": "Application complete and routed to David for questions analysis",
-    "action": "ROUTE_TO_DAVID"
-}
-\`\`\``
+                {
+                    "score": 1,
+                    "reason": "Application complete and routed to David for questions analysis",
+                    "action": "ROUTE_TO_DAVID"
+                }
+            \`\`\``
         },
         {
             context: "Checking incomplete application disposition",
@@ -141,14 +141,12 @@ const completionDispositionEvaluator: Evaluator = {
                 }
             ],
             outcome: `\`\`\`json
-{
-    "score": 0.5,
-    "reason": "Application disposition: incomplete. Requires completion before routing to David.",
-    "action": null
-}
-\`\`\``
+                {
+                    "score": 0.5,
+                    "reason": "Application disposition: incomplete. Requires completion before routing to David.",
+                    "action": null
+                }
+            \`\`\``
         }
     ]
 };
-
-export default completionDispositionEvaluator; 

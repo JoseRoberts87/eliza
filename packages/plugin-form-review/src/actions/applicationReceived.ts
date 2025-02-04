@@ -14,23 +14,26 @@ interface ApplicationForm {
 }
 
 function isApplicationForm(data: any): data is ApplicationForm {
-    return (
-        typeof data === "object" &&
-        data !== null &&
-        typeof data.companyName === "string"
-    );
+    // TODO: implement proper Application Form
+    
+    // return (
+    //     typeof data === "object" &&
+    //     data !== null &&
+    //     typeof data.companyName === "string"
+    // );
+    return (data !== null)
 }
 
-elizaLogger.info("FORM_RECEIVED loaded");
+elizaLogger.info("APPLICATION_FORM_RECEIVED loaded");
 
 export const applicationReceivedAction: Action = {
-    name: "FORM_RECEIVED",
+    name: "APPLICATION_FORM_RECEIVED",
     similes: ["APPLICATION_RECEIVED", "NEW_APPLICATION"],
     description: "Records receipt of a new application form and creates a memory entry",
 
     validate: async (runtime: IAgentRuntime, message: Memory) => {
         const content = message.content;
-        elizaLogger.info("ACTION: Validating application form...");
+        elizaLogger.info("APPLICATION_FORM_RECEIVED validator...");
         // return (
         //     content?.type === "application" &&
         //     isApplicationForm(content.data) &&
@@ -47,9 +50,11 @@ export const applicationReceivedAction: Action = {
         _options?: object,
         callback?: HandlerCallback
     ) => {
-        elizaLogger.info("Processing new application form...");
+        elizaLogger.info("APPLICATION_FORM_RECEIVED handler...");
         try {
-            const applicationData = message.content.data;
+            const applicationData = message.content.attachments;
+
+            elizaLogger.info(applicationData[0].text);
             
             if (!isApplicationForm(applicationData)) {
                 callback(
@@ -63,16 +68,8 @@ export const applicationReceivedAction: Action = {
             await runtime.messageManager.createMemory({
                 id: message.id,
                 content: {
-                    type: "application",
-                    text: `New application received from ${applicationData.companyName}`,
-                    data: {
-                        ...applicationData,
-                        disposition: {
-                            status: "received",
-                            timestamp: new Date().toISOString(),
-                            receivedBy: "stacey"
-                        }
-                    }
+                    action: "APPLICATION_FORM_RECEIVED",
+                    text: `New application received from `,
                 },
                 roomId: message.roomId,
                 userId: message.userId,

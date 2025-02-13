@@ -27,6 +27,7 @@ export const formCompletionAction: Action = {
         "Validates VC Accelerator applications by checking form completion and required fields",
 
     validate: async (runtime: IAgentRuntime, message: Memory) => {
+        elizaLogger.info("APPLICATION_FORM_COMPLETION validator...");
         // Validate that we have an application to check
         // return (
         //     message.content?.type === "application" && !!message.content.data
@@ -40,7 +41,7 @@ export const formCompletionAction: Action = {
         _options?: any,
         callback?: HandlerCallback
     ) => {
-        elizaLogger.info("VALIDATE_APPLICATION_FORM called");
+        elizaLogger.info("APPLICATION_FORM_COMPLETION handler...");
 
         try {
             if (!state) {

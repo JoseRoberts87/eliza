@@ -11,7 +11,7 @@ export const yconicReceiverCharacter: Character = {
     ...defaultCharacter,
     name: "yconicReceiver",
     username: "yconicReceiver",
-    plugins: [],
+    plugins: [applicationReceivedPlugin],
     clients: [Clients.DIRECT],
     modelProvider: ModelProviderName.OPENAI,
     settings: {

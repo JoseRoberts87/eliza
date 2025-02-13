@@ -4,7 +4,9 @@ import {
     type Memory,
     type HandlerCallback,
     type State,
+    stringToUuid,
     elizaLogger,
+    Content,
 } from "@elizaos/core";
 
 interface ApplicationForm {
@@ -15,13 +17,48 @@ interface ApplicationForm {
 
 function isApplicationForm(data: any): data is ApplicationForm {
     // TODO: implement proper Application Form
-    
+
     // return (
     //     typeof data === "object" &&
     //     data !== null &&
     //     typeof data.companyName === "string"
     // );
-    return (data !== null)
+    return data !== null;
+}
+
+async function callYconicCompletion(message: Memory) {
+    elizaLogger.info("Calling Yconic completion...");
+    const formdata = new FormData();
+    formdata.append("text", "Submitting complete application for review");
+    formdata.append("user", "yconicReceiver");
+    
+    // Format the application data to match the expected format for validation
+    const applicationContent = {
+        type: "application",
+        text: "Submitting complete application for review",
+        data: message.content.attachments[0]
+    };
+
+    const requestOptions: RequestInit = {
+        method: "POST",
+        body: JSON.stringify({
+            content: applicationContent,
+            action: "VALIDATE_APPLICATION_FORM"
+        }),
+        redirect: "follow",
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        },
+    };
+
+    await fetch(
+        "http://localhost:3000/550e8400-e29b-41d4-a716-446655440001/message",
+        requestOptions
+    )
+        .then((response) => response.text())
+        .then((result) => elizaLogger.info("Validation response:", result))
+        .catch((error) => elizaLogger.error("Error calling validation:", error));
 }
 
 elizaLogger.info("APPLICATION_FORM_RECEIVED loaded");
@@ -29,7 +66,8 @@ elizaLogger.info("APPLICATION_FORM_RECEIVED loaded");
 export const applicationReceivedAction: Action = {
     name: "APPLICATION_FORM_RECEIVED",
     similes: ["APPLICATION_RECEIVED", "NEW_APPLICATION"],
-    description: "Records receipt of a new application form and creates a memory entry",
+    description:
+        "Records receipt of a new application form and creates a memory entry",
 
     validate: async (runtime: IAgentRuntime, message: Memory) => {
         const content = message.content;
@@ -54,41 +92,58 @@ export const applicationReceivedAction: Action = {
         try {
             const applicationData = message.content.attachments;
 
-            elizaLogger.info(applicationData[0].text);
-            
             if (!isApplicationForm(applicationData)) {
-                callback(
-                    { text: "Invalid application form format." },
-                    []
-                );
+                callback({ text: "Invalid application form format." }, []);
                 return;
             }
 
+            const messageId = stringToUuid(Date.now().toString());
+
+            const content: Content = {
+                text: `New application received from ${applicationData.companyName}`,
+                attachments: [],
+                source: "direct",
+                inReplyTo: undefined,
+            };
+
+            const userMessage = {
+                content,
+                userId: message.userId,
+                roomId: message.userId,
+                agentId: runtime.agentId,
+            };
+
             // Create memory entry for the received application
             await runtime.messageManager.createMemory({
-                id: message.id,
-                content: {
-                    action: "APPLICATION_FORM_RECEIVED",
-                    text: `New application received from `,
-                },
+                id: stringToUuid(messageId + "-" + runtime.agentId),
+                ...userMessage,
                 roomId: message.roomId,
                 userId: message.userId,
-                agentId: runtime.agentId
+                content: content,
+                agentId: runtime.agentId,
+                createdAt: Date.now(),
             });
+
+            callYconicCompletion(message);
 
             // Send acknowledgment response
             callback(
                 {
-                    text: `Thank you for submitting your application${applicationData.companyName ? ` for ${applicationData.companyName}` : ''}! I've recorded your submission and will begin the review process. You'll receive updates as your application progresses through our evaluation stages.`,
-                    action: "FORM_RECEIVED"
+                    text: `Thank you for submitting your application${
+                        applicationData.companyName
+                            ? ` for ${applicationData.companyName}`
+                            : ""
+                    }! I've recorded your submission and will begin the review process. You'll receive updates as your application progresses through our evaluation stages.`,
+                    action: "FORM_RECEIVED",
                 },
                 []
             );
-
         } catch (error) {
             elizaLogger.error("Error processing application form:", error);
             callback(
-                { text: "There was an error processing your application. Please try again or contact support." },
+                {
+                    text: "There was an error processing your application. Please try again or contact support.",
+                },
                 []
             );
         }
@@ -102,17 +157,17 @@ export const applicationReceivedAction: Action = {
                     text: "Submitting new application",
                     data: {
                         companyName: "TechVision AI",
-                        description: "AI-powered workflow automation platform"
-                    }
-                }
+                        description: "AI-powered workflow automation platform",
+                    },
+                },
             },
             {
                 user: "stacey",
                 content: {
                     text: "Thank you for submitting your application for TechVision AI! I've recorded your submission and will begin the review process. You'll receive updates as your application progresses through our evaluation stages.",
-                    action: "FORM_RECEIVED"
-                }
-            }
+                    action: "FORM_RECEIVED",
+                },
+            },
         ],
         [
             {
@@ -124,17 +179,17 @@ export const applicationReceivedAction: Action = {
                         companyName: "DataFlow Systems",
                         description: "Enterprise data pipeline solution",
                         teamSize: 5,
-                        fundingStage: "Seed"
-                    }
-                }
+                        fundingStage: "Seed",
+                    },
+                },
             },
             {
                 user: "stacey",
                 content: {
                     text: "Thank you for submitting your application for DataFlow Systems! I've recorded your submission and will begin the review process. You'll receive updates as your application progresses through our evaluation stages.",
-                    action: "FORM_RECEIVED"
-                }
-            }
-        ]
-    ]
+                    action: "FORM_RECEIVED",
+                },
+            },
+        ],
+    ],
 };

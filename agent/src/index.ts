@@ -152,7 +152,10 @@ import { formPlugin } from "@elizaos/plugin-form";
 import { MongoClient } from "mongodb";
 import { quickIntelPlugin } from "@elizaos/plugin-quick-intel";
 
-import { staceyCharacter } from "./yconicReceiverCharacter";
+import { EnigmaClientInterface } from "@elizaos/client-enigma";
+
+import { yconicReceiverCharacter } from "./yconicReceiverCharacter";
+import { yconicCompletionCharacter } from "./yconicCompletionCharacter";
 
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 const __dirname = path.dirname(__filename); // get the name of the directory
@@ -477,7 +480,8 @@ export async function loadCharacters(
 
     if (loadedCharacters.length === 0) {
         elizaLogger.info("No characters found, using default character");
-        loadedCharacters.push(staceyCharacter);
+        loadedCharacters.push(yconicReceiverCharacter);
+        loadedCharacters.push(yconicCompletionCharacter);
     }
 
     return loadedCharacters;
@@ -869,6 +873,11 @@ export async function initializeClients(
     if (clientTypes.includes("slack")) {
         const slackClient = await SlackClientInterface.start(runtime);
         if (slackClient) clients.slack = slackClient; // Use object property instead of push
+    }
+
+    if (clientTypes.includes("enigma")) {
+        const enigmaClient = await EnigmaClientInterface.start(runtime);
+        if (enigmaClient) clients.enigma = enigmaClient;
     }
 
     function determineClientType(client: Client): string {
@@ -1436,7 +1445,7 @@ const startAgents = async () => {
     let serverPort = Number.parseInt(settings.SERVER_PORT || "3000");
     const args = parseArguments();
     const charactersArg = args.characters || args.character;
-    let characters = [staceyCharacter];
+    let characters = [yconicReceiverCharacter, yconicCompletionCharacter];
 
     if (process.env.IQ_WALLET_ADDRESS && process.env.IQSOlRPC) {
         characters = await loadCharacterFromOnchain();

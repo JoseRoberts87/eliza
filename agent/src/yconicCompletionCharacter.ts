@@ -12,7 +12,7 @@ export const yconicCompletionCharacter: Character = {
     name: "yconicCompletion",
     username: "yconicCompletion",
     plugins: [formCompletionPlugin],
-    clients: [Clients.DIRECT, Clients.ENIGMA],
+    clients: [Clients.DIRECT],
     modelProvider: ModelProviderName.OPENAI,
     settings: {
         secrets: {},

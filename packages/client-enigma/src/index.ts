@@ -1,6 +1,8 @@
 import { type Client, elizaLogger, type IAgentRuntime } from "@elizaos/core";
-import { ClientBase, type EnigmaConfig } from "./base";
+import { ClientBase} from "./base";
 import { EnigmaInteractionClient } from "./interactions";
+import { Application, ApplicationStatus, EnigmaConfig } from "./type";
+import { DatabaseService } from "./database";
 
 class EnigmaManager {
     client: ClientBase;
@@ -48,3 +50,5 @@ export const EnigmaClientInterface: Client = {
 };
 
 export default EnigmaClientInterface; 
+
+export { ClientBase, type Application, ApplicationStatus, DatabaseService };

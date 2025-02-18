@@ -1,10 +1,13 @@
 import { type IAgentRuntime, elizaLogger } from "@elizaos/core";
 import { ClientBase } from "./base";
+import { DatabaseService } from "./database";
+import { ApplicationStatus, Application } from "./type";
 
 export class EnigmaInteractionClient {
     client: ClientBase;
     runtime: IAgentRuntime;
     private isDryRun: boolean;
+    db: DatabaseService;
 
     constructor(client: ClientBase, runtime: IAgentRuntime) {
         this.client = client;
@@ -32,7 +35,10 @@ export class EnigmaInteractionClient {
                 elizaLogger.info("Dry run: Would process interactions here");
             } else {
                 elizaLogger.info("Processing interactions...");
+
+                const application: Application[] = await this.client.db.getApplicationByStatus(ApplicationStatus.RECEIVED, true);
                 // Add actual interaction processing logic here
+                elizaLogger.info(`Processing application: ${application}`);
             }
         } catch (error) {
             elizaLogger.error("Error handling Enigma interactions:", error);

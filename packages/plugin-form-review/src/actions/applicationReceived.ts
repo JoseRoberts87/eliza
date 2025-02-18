@@ -9,6 +9,12 @@ import {
     Content,
 } from "@elizaos/core";
 
+import {
+    ApplicationStatus,
+    DatabaseService,
+    type Application,
+} from "@elizaos/client-enigma";
+
 interface ApplicationForm {
     companyName: string;
     description?: string;
@@ -31,24 +37,24 @@ async function callYconicCompletion(message: Memory) {
     const formdata = new FormData();
     formdata.append("text", "Submitting complete application for review");
     formdata.append("user", "yconicReceiver");
-    
+
     // Format the application data to match the expected format for validation
     const applicationContent = {
         type: "application",
         text: "Submitting complete application for review",
-        data: message.content.attachments[0]
+        data: message.content.attachments[0],
     };
 
     const requestOptions: RequestInit = {
         method: "POST",
         body: JSON.stringify({
             content: applicationContent,
-            action: "VALIDATE_APPLICATION_FORM"
+            action: "VALIDATE_APPLICATION_FORM",
         }),
         redirect: "follow",
         headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json"
+            Accept: "application/json",
+            "Content-Type": "application/json",
         },
     };
 
@@ -58,7 +64,9 @@ async function callYconicCompletion(message: Memory) {
     )
         .then((response) => response.text())
         .then((result) => elizaLogger.info("Validation response:", result))
-        .catch((error) => elizaLogger.error("Error calling validation:", error));
+        .catch((error) =>
+            elizaLogger.error("Error calling validation:", error)
+        );
 }
 
 elizaLogger.info("APPLICATION_FORM_RECEIVED loaded");
@@ -124,7 +132,29 @@ export const applicationReceivedAction: Action = {
                 createdAt: Date.now(),
             });
 
-            callYconicCompletion(message);
+            const application: Application = {
+                id: stringToUuid(messageId + "-" + runtime.agentId),
+                companyName: "applicationData.companyName",
+                createdAt: Date.now(),
+                updatedAt: Date.now(),
+                updatedBy: runtime.agentId,
+                status: ApplicationStatus.RECEIVED,
+            };
+
+            try {
+                // TODO: remove logs that are not needed
+
+                const client = new DatabaseService();
+                // elizaLogger.info("Inserting application into database...");
+                await client.insertApplication(application);
+                elizaLogger.info("Application inserted into database");
+            } catch (error) {
+                elizaLogger.info(error);
+                elizaLogger.error(
+                    "Error inserting application into database:",
+                    error
+                );
+            }
 
             // Send acknowledgment response
             callback(

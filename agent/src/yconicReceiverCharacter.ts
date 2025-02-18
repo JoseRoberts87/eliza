@@ -12,7 +12,7 @@ export const yconicReceiverCharacter: Character = {
     name: "yconicReceiver",
     username: "yconicReceiver",
     plugins: [applicationReceivedPlugin],
-    clients: [Clients.DIRECT],
+    clients: [Clients.DIRECT, Clients.ENIGMA],
     modelProvider: ModelProviderName.OPENAI,
     settings: {
         secrets: {},

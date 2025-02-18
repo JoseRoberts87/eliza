@@ -1,10 +1,6 @@
 import { type IAgentRuntime, elizaLogger } from "@elizaos/core";
 import { DatabaseService } from "./database";
-
-export interface EnigmaConfig {
-    ENIGMA_DRY_RUN?: boolean;
-    ENIGMA_POLL_INTERVAL?: number;
-}
+import { EnigmaConfig } from "./type";
 
 export class ClientBase {
     runtime: IAgentRuntime;

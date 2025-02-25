@@ -174,22 +174,6 @@ export const formCompletionAction: Action = {
             // ${formResult.competitors?.competitor2 ? `- Second Competitor` : ""}
             // ${formResult.competitors?.competitor3 ? `- Third Competitor` : ""}`;
 
-            try {
-                // TODO: remove logs that are not needed
-
-                const client = new DatabaseService();
-                await client.updateApplicationStatus(EnigmaInteractionClient.id, ApplicationStatus.FORM_COMPLETED);
-
-                // await client.insertApplication(receivedApplication);
-                elizaLogger.info("Application inserted into database");
-            } catch (error) {
-                elizaLogger.info(error);
-                elizaLogger.error(
-                    "Error inserting application into database:",
-                    error
-                );
-            }
-
             if (callback) {
                 callback({ text: "application for passed completion check" }, []);
             }

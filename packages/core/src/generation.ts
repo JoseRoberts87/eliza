@@ -3,21 +3,22 @@ import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { createMistral } from "@ai-sdk/mistral";
 import { createGroq } from "@ai-sdk/groq";
 import { createOpenAI } from "@ai-sdk/openai";
+import { bedrock } from "@ai-sdk/amazon-bedrock";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import {
     generateObject as aiGenerateObject,
     generateText as aiGenerateText,
-    CoreTool,
-    GenerateObjectResult,
-    StepResult as AIStepResult,
+    type CoreTool,
+    type GenerateObjectResult,
+    type StepResult as AIStepResult,
 } from "ai";
 import { Buffer } from "buffer";
 import { createOllama } from "ollama-ai-provider";
 import OpenAI from "openai";
-import { encodingForModel, TiktokenModel } from "js-tiktoken";
+import { encodingForModel, type TiktokenModel } from "js-tiktoken";
 import { AutoTokenizer } from "@huggingface/transformers";
 import Together from "together-ai";
-import { ZodSchema } from "zod";
+import type { ZodSchema } from "zod";
 import { elizaLogger } from "./index.ts";
 import {
     models,
@@ -34,19 +35,19 @@ import {
 } from "./parsing.ts";
 import settings from "./settings.ts";
 import {
-    Content,
-    IAgentRuntime,
-    IImageDescriptionService,
-    ITextGenerationService,
+    type Content,
+    type IAgentRuntime,
+    type IImageDescriptionService,
+    type ITextGenerationService,
     ModelClass,
     ModelProviderName,
     ServiceType,
-    ActionResponse,
-    IVerifiableInferenceAdapter,
-    VerifiableInferenceOptions,
-    VerifiableInferenceResult,
+    type ActionResponse,
+    type IVerifiableInferenceAdapter,
+    type VerifiableInferenceOptions,
+    type VerifiableInferenceResult,
     //VerifiableInferenceProvider,
-    TelemetrySettings,
+    type TelemetrySettings,
     TokenizerType,
 } from "./types.ts";
 import { fal } from "@fal-ai/client";
@@ -533,7 +534,8 @@ export async function generateText({
             case ModelProviderName.HYPERBOLIC:
             case ModelProviderName.TOGETHER:
             case ModelProviderName.NINETEEN_AI:
-            case ModelProviderName.AKASH_CHAT_API: {
+            case ModelProviderName.AKASH_CHAT_API:
+            case ModelProviderName.LMSTUDIO: {
                 elizaLogger.debug(
                     "Initializing OpenAI model with Cloudflare check"
                 );
@@ -574,8 +576,14 @@ export async function generateText({
                 const openai = createOpenAI({
                     apiKey,
                     baseURL: endpoint,
-                    fetch: async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
-                        const url = typeof input === 'string' ? input : input.toString();
+                    fetch: async (
+                        input: RequestInfo | URL,
+                        init?: RequestInit
+                    ): Promise<Response> => {
+                        const url =
+                            typeof input === "string"
+                                ? input
+                                : input.toString();
                         const chain_id =
                             runtime.getSetting("ETERNALAI_CHAIN_ID") || "45762";
 
@@ -588,9 +596,11 @@ export async function generateText({
 
                         const fetching = await runtime.fetch(url, options);
 
-                        if (parseBooleanFromText(
-                            runtime.getSetting("ETERNALAI_LOG")
-                        )) {
+                        if (
+                            parseBooleanFromText(
+                                runtime.getSetting("ETERNALAI_LOG")
+                            )
+                        ) {
                             elizaLogger.info(
                                 "Request data: ",
                                 JSON.stringify(options, null, 2)
@@ -1157,6 +1167,32 @@ export async function generateText({
                 break;
             }
 
+            case ModelProviderName.NVIDIA: {
+                elizaLogger.debug("Initializing NVIDIA model.");
+                const nvidia = createOpenAI({
+                    apiKey: apiKey,
+                    baseURL: endpoint,
+                });
+
+                const { text: nvidiaResponse } = await aiGenerateText({
+                    model: nvidia.languageModel(model),
+                    prompt: context,
+                    system:
+                        runtime.character.system ??
+                        settings.SYSTEM_PROMPT ??
+                        undefined,
+                    tools: tools,
+                    onStepFinish: onStepFinish,
+                    temperature: temperature,
+                    maxSteps: maxSteps,
+                    maxTokens: max_response_length,
+                });
+
+                response = nvidiaResponse;
+                elizaLogger.debug("Received response from NVIDIA model.");
+                break;
+            }
+
             case ModelProviderName.DEEPSEEK: {
                 elizaLogger.debug("Initializing Deepseek model.");
                 const serverUrl = models[provider].endpoint;
@@ -1185,6 +1221,65 @@ export async function generateText({
 
                 response = deepseekResponse;
                 elizaLogger.debug("Received response from Deepseek model.");
+                break;
+            }
+
+            case ModelProviderName.LIVEPEER: {
+                elizaLogger.debug("Initializing Livepeer model.");
+
+                if (!endpoint) {
+                    throw new Error("Livepeer Gateway URL is not defined");
+                }
+
+                const requestBody = {
+                    model: model,
+                    messages: [
+                        {
+                            role: "system",
+                            content:
+                                runtime.character.system ??
+                                settings.SYSTEM_PROMPT ??
+                                "You are a helpful assistant",
+                        },
+                        {
+                            role: "user",
+                            content: context,
+                        },
+                    ],
+                    max_tokens: max_response_length,
+                    stream: false,
+                };
+
+                const fetchResponse = await runtime.fetch(endpoint + "/llm", {
+                    method: "POST",
+                    headers: {
+                        accept: "text/event-stream",
+                        "Content-Type": "application/json",
+                        Authorization: "Bearer eliza-app-llm",
+                    },
+                    body: JSON.stringify(requestBody),
+                });
+
+                if (!fetchResponse.ok) {
+                    const errorText = await fetchResponse.text();
+                    throw new Error(
+                        `Livepeer request failed (${fetchResponse.status}): ${errorText}`
+                    );
+                }
+
+                const json = await fetchResponse.json();
+
+                if (!json?.choices?.[0]?.message?.content) {
+                    throw new Error("Invalid response format from Livepeer");
+                }
+
+                response = json.choices[0].message.content.replace(
+                    /<\|start_header_id\|>assistant<\|end_header_id\|>\n\n/,
+                    ""
+                );
+                elizaLogger.debug(
+                    "Successfully received response from Livepeer model"
+                );
                 break;
             }
 
@@ -1273,8 +1368,8 @@ export async function generateShouldRespond({
  */
 export async function splitChunks(
     content: string,
-    chunkSize: number = 512,
-    bleed: number = 20
+    chunkSize = 512,
+    bleed = 20
 ): Promise<string[]> {
     elizaLogger.debug(`[splitChunks] Starting text split`);
 
@@ -1721,7 +1816,6 @@ export const generateImage = async (
                     }
                 },
             });
-
             // Convert the returned image URLs to base64 to match existing functionality
             const base64Promises = result.data.images.map(async (image) => {
                 const response = await fetch(image.url);
@@ -1822,15 +1916,18 @@ export const generateImage = async (
                 if (!baseUrl.protocol.startsWith("http")) {
                     throw new Error("Invalid Livepeer Gateway URL protocol");
                 }
+
                 const response = await fetch(
                     `${baseUrl.toString()}text-to-image`,
                     {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
+                            Authorization: "Bearer eliza-app-img",
                         },
                         body: JSON.stringify({
-                            model_id: model,
+                            model_id:
+                                data.modelId || "ByteDance/SDXL-Lightning",
                             prompt: data.prompt,
                             width: data.width || 1024,
                             height: data.height || 1024,
@@ -2082,6 +2179,7 @@ export async function handleProvider(
         case ModelProviderName.TOGETHER:
         case ModelProviderName.NANOGPT:
         case ModelProviderName.AKASH_CHAT_API:
+        case ModelProviderName.LMSTUDIO:
             return await handleOpenAI(options);
         case ModelProviderName.ANTHROPIC:
         case ModelProviderName.CLAUDE_VERTEX:
@@ -2108,6 +2206,8 @@ export async function handleProvider(
             return await handleOllama(options);
         case ModelProviderName.DEEPSEEK:
             return await handleDeepSeek(options);
+        case ModelProviderName.LIVEPEER:
+            return await handleLivepeer(options);
         default: {
             const errorMessage = `Unsupported provider: ${provider}`;
             elizaLogger.error(errorMessage);
@@ -2395,6 +2495,62 @@ async function handleDeepSeek({
     });
 }
 
+/**
+ * Handles object generation for Amazon Bedrock models.
+ *
+ * @param {ProviderOptions} options - Options specific to Amazon Bedrock.
+ * @returns {Promise<GenerateObjectResult<unknown>>} - A promise that resolves to generated objects.
+ */
+async function handleBedrock({
+    model,
+    schema,
+    schemaName,
+    schemaDescription,
+    mode,
+    modelOptions,
+    provider,
+}: ProviderOptions): Promise<GenerateObjectResult<unknown>> {
+    return await aiGenerateObject({
+        model: bedrock(model),
+        schema,
+        schemaName,
+        schemaDescription,
+        mode,
+        ...modelOptions,
+    });
+}
+
+async function handleLivepeer({
+    model,
+    apiKey,
+    schema,
+    schemaName,
+    schemaDescription,
+    mode,
+    modelOptions,
+}: ProviderOptions): Promise<GenerateObjectResult<unknown>> {
+    console.log("Livepeer provider api key:", apiKey);
+    if (!apiKey) {
+        throw new Error(
+            "Livepeer provider requires LIVEPEER_GATEWAY_URL to be configured"
+        );
+    }
+
+    const livepeerClient = createOpenAI({
+        apiKey,
+        baseURL: apiKey, // Use the apiKey as the baseURL since it contains the gateway URL
+    });
+
+    return await aiGenerateObject({
+        model: livepeerClient.languageModel(model),
+        schema,
+        schemaName,
+        schemaDescription,
+        mode,
+        ...modelOptions,
+    });
+}
+
 // Add type definition for Together AI response
 interface TogetherAIImageResponse {
     data: Array<{
@@ -2421,13 +2577,13 @@ export async function generateTweetActions({
                 context,
                 modelClass,
             });
-            console.debug(
+            elizaLogger.debug(
                 "Received response from generateText for tweet actions:",
                 response
             );
             const { actions } = parseActionResponseFromText(response.trim());
             if (actions) {
-                console.debug("Parsed tweet actions:", actions);
+                elizaLogger.debug("Parsed tweet actions:", actions);
                 return actions;
             } else {
                 elizaLogger.debug("generateTweetActions no valid response");

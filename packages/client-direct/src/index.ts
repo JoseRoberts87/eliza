@@ -245,7 +245,7 @@ export class DirectClient {
                         title: req.file.originalname,
                         source: "direct",
                         description: `Uploaded file: ${req.file.originalname}`,
-                        text: "",
+                        text: fs.readFileSync(filePath, "utf8"),                        
                         contentType: req.file.mimetype,
                     });
                 }

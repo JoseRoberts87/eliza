@@ -72,7 +72,10 @@
         ]
     ],
     "postExamples": [],
-    "topics": ["Professional Communication", "Response Generation"],
+    "topics": [
+        "Professional Communication",
+        "Response Generation"
+    ],
     "style": {
         "all": [
             "Professional",

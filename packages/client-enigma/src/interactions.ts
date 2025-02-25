@@ -19,7 +19,7 @@ export class EnigmaInteractionClient {
 
     async start() {
         const handleInteractionsLoop = () => {
-            // this.handleInteractions();
+            this.handleInteractions();
             setTimeout(
                 handleInteractionsLoop,
                 // Use the configured poll interval
@@ -91,7 +91,8 @@ export class EnigmaInteractionClient {
                 );
             if (
                 this.runtime.character.name === "yconicSupplemental" &&
-                AdditionalQuestonsApplication.status === ApplicationStatus.ADDITIONAL_QUESTIONS
+                AdditionalQuestonsApplication.status ===
+                    ApplicationStatus.ADDITIONAL_QUESTIONS
             ) {
                 const submission: Submission = JSON.parse(
                     AdditionalQuestonsApplication.message
@@ -136,24 +137,23 @@ export class EnigmaInteractionClient {
             }
 
             const scoredApplication: Application =
-            await this.client.db.getApplicationByStatus(
-                ApplicationStatus.SCORED
-            );
-        if (
-            this.runtime.character.name === "yconicScore" &&
-            scoredApplication.status === ApplicationStatus.SCORED
-        ) {
-            const submission: Submission = JSON.parse(
-                scoredApplication.message
-            );
-            const success = await this.callYconicAgent(
-                "yconicScore",
-                "550e8400-e29b-41d4-a716-446655440004",
-                "ANALYZE_ADDITIONAL_QUESTIONS",
-                submission
-            );
-            
-            if (success) {
+                await this.client.db.getApplicationByStatus(
+                    ApplicationStatus.SCORED
+                );
+            if (
+                this.runtime.character.name === "yconicScore" &&
+                scoredApplication.status === ApplicationStatus.SCORED
+            ) {
+                // const submission: Submission = JSON.parse(
+                //     scoredApplication.message
+                // );
+                // const success = await this.callYconicAgent(
+                //     "yconicScore",
+                //     "550e8400-e29b-41d4-a716-446655440004",
+                //     "ANALYZE_ADDITIONAL_QUESTIONS",
+                //     submission
+                // );
+
                 // await this.client.db.updateApplicationStatus(
                 //     scoredApplication.id,
                 //     ApplicationStatus.SCORED
@@ -162,10 +162,7 @@ export class EnigmaInteractionClient {
                 elizaLogger.info("#######################################");
                 elizaLogger.info("CONGRATULATIONS!!!!!!!!!!!!");
                 elizaLogger.info("#######################################");
-
             }
-        }
-
         } catch (error) {
             elizaLogger.error("Error handling Enigma interactions:", error);
         }

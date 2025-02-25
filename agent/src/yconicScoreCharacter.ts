@@ -6,13 +6,13 @@ import {
 } from "@elizaos/core";
 import { scoreGeneratorPlugin } from "@elizaos/plugin-form-review";
 
-export const yconicScorelCharacter: Character = {
+export const yconicScoreCharacter: Character = {
     id: "550e8400-e29b-41d4-a716-446655440004",
     ...defaultCharacter,
     name: "yconicScore",
     username: "yconicScore",
     plugins: [scoreGeneratorPlugin],
-    clients: [Clients.DIRECT],
+    clients: [Clients.DIRECT, Clients.ENIGMA],
     modelProvider: ModelProviderName.OPENAI,
     settings: {
         secrets: {},

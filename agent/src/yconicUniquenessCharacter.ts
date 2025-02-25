@@ -12,7 +12,7 @@ export const yconicUniquenessCharacter: Character = {
     name: "yconicUniqueness",
     username: "yconicUniqueness",
     plugins: [uniquenessAssessorPlugin],
-    clients: [Clients.DIRECT],
+    clients: [Clients.DIRECT, Clients.ENIGMA],
     modelProvider: ModelProviderName.OPENAI,
     settings: {
         secrets: {},

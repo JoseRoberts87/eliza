@@ -156,6 +156,9 @@ import { EnigmaClientInterface } from "@elizaos/client-enigma";
 
 import { yconicReceiverCharacter } from "./yconicReceiverCharacter";
 import { yconicCompletionCharacter } from "./yconicCompletionCharacter";
+import { yconicSupplementalCharacter } from "./yconicSupplementalCharacter";
+import { yconicUniquenessCharacter } from "./yconicUniquenessCharacter";
+import { yconicScoreCharacter } from "./yconicScoreCharacter";
 
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 const __dirname = path.dirname(__filename); // get the name of the directory
@@ -482,6 +485,9 @@ export async function loadCharacters(
         elizaLogger.info("No characters found, using default character");
         loadedCharacters.push(yconicReceiverCharacter);
         loadedCharacters.push(yconicCompletionCharacter);
+        loadedCharacters.push(yconicSupplementalCharacter);
+        loadedCharacters.push(yconicUniquenessCharacter);
+        loadedCharacters.push(yconicScoreCharacter);
     }
 
     return loadedCharacters;
@@ -949,7 +955,6 @@ export async function createAgent(
         );
     }
 
-
     // Initialize Reclaim adapter if environment variables are present
     // let verifiableInferenceAdapter;
     // if (
@@ -1273,7 +1278,7 @@ export async function createAgent(
             getSecret(character, "QUICKINTEL_API_KEY")
                 ? quickIntelPlugin
                 : null,
-            getSecret(character, "GELATO_RELAY_API_KEY") ? gelatoPlugin : null
+            getSecret(character, "GELATO_RELAY_API_KEY") ? gelatoPlugin : null,
         ]
             .flat()
             .filter(Boolean),
@@ -1445,7 +1450,13 @@ const startAgents = async () => {
     let serverPort = Number.parseInt(settings.SERVER_PORT || "3000");
     const args = parseArguments();
     const charactersArg = args.characters || args.character;
-    let characters = [yconicReceiverCharacter, yconicCompletionCharacter];
+    let characters = [
+        yconicReceiverCharacter,
+        yconicCompletionCharacter,
+        yconicSupplementalCharacter,
+        yconicUniquenessCharacter,
+        yconicScoreCharacter,
+    ];
 
     if (process.env.IQ_WALLET_ADDRESS && process.env.IQSOlRPC) {
         characters = await loadCharacterFromOnchain();

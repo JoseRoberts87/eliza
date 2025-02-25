@@ -51,4 +51,4 @@ export const EnigmaClientInterface: Client = {
 
 export default EnigmaClientInterface; 
 
-export { ClientBase, type Application, ApplicationStatus, DatabaseService };
+export { ClientBase, type Application, ApplicationStatus, DatabaseService, EnigmaInteractionClient };

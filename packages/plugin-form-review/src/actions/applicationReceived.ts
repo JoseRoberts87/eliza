@@ -132,18 +132,23 @@ export const applicationReceivedAction: Action = {
                 createdAt: Date.now(),
             });
 
+            const currentTime = Date.now();
+
+            const messageContent = JSON.stringify(message.content);
+
             const application: Application = {
                 id: stringToUuid(messageId + "-" + runtime.agentId),
                 companyName: "applicationData.companyName",
-                createdAt: Date.now(),
-                updatedAt: Date.now(),
+                createdAt: currentTime,
+                updatedAt: currentTime,
                 updatedBy: runtime.agentId,
+                message: messageContent,
+                messageResponse: messageContent,
                 status: ApplicationStatus.RECEIVED,
             };
 
             try {
                 // TODO: remove logs that are not needed
-
                 const client = new DatabaseService();
                 // elizaLogger.info("Inserting application into database...");
                 await client.insertApplication(application);

@@ -9,6 +9,8 @@ CREATE TABLE IF NOT EXISTS applications (
     created_at BIGINT NOT NULL,
     updated_at BIGINT NOT NULL,
     updated_by TEXT NOT NULL,
+    message TEXT NOT NULL,
+    message_response TEXT NOT NULL,
     status TEXT NOT NULL
 );
 
@@ -21,7 +23,6 @@ CREATE TABLE IF NOT EXISTS reviews (
     reviewer_id TEXT NOT NULL,
     FOREIGN KEY (application_id) REFERENCES applications (id)
 );`;
-
 
 export class DatabaseService {
     db: pgPromise.IDatabase<any> | null = null;
@@ -89,19 +90,21 @@ export class DatabaseService {
 
     // Example methods for working with the database
     async insertApplication(application: Application): Promise<void> {
-    // TODO: remove logs that are not needed
+        // TODO: remove logs that are not needed
         elizaLogger.info("Inserting application into database...!!!");
         const db = this.getDb();
         elizaLogger.info("got DB connection!!!!:", application);
         await db.none(
-            `INSERT INTO applications(id, company_name, created_at, updated_at, updated_by, status)
-             VALUES($1, $2, $3, $4, $5, $6)`,
+            `INSERT INTO applications(id, company_name, created_at, updated_at, updated_by, message, message_response, status)
+             VALUES($1, $2, $3, $4, $5, $6, $7, $8)`,
             [
                 application.id,
                 application.companyName,
                 application.createdAt,
                 application.updatedAt,
                 application.updatedBy,
+                application.message,
+                application.messageResponse,
                 application.status,
             ]
         );
@@ -110,41 +113,50 @@ export class DatabaseService {
     async getApplicationById(id: string): Promise<Application | null> {
         const db = this.getDb();
         return await db.oneOrNone(
-            `SELECT id, company_name as "companyName", updated_at as "updatedAt", status
+            `SELECT id, company_name as "companyName", created_at as "createdAt", 
+            updated_at as "updatedAt", updated_by as "updatedBy", message, 
+            message_response as "messageResponse", status
              FROM applications WHERE id = $1;`,
             id
         );
     }
 
     async getApplicationByStatus(
-        status: ApplicationStatus,
-        nextApplication: boolean = false
-    ): Promise<Application[]> {
+        status: ApplicationStatus
+    ): Promise<Application> {
         const db = this.getDb();
-
-        if (nextApplication) {
-            return await db.oneOrNone(
-                `SELECT id, company_name as "companyName", updated_at as "updatedAt", status
-                FROM applications WHERE status = $1 ORDER BY updated_at ASC LIMIT 1;`,
-                status
-            );
-        } else {
-            return await db.manyOrNone(
-                `SELECT id, company_name as "companyName", updated_at as "updatedAt", status
-                 FROM applications WHERE status = $1;`,
-                status
-            );
-        }
+        return await db.oneOrNone(
+            `SELECT id, company_name as "companyName", created_at as "createdAt", 
+            updated_at as "updatedAt", updated_by as "updatedBy", message, 
+            message_response as "messageResponse", status
+            FROM applications WHERE status = $1 ORDER BY updated_at ASC LIMIT 1;`,
+            status
+        );
     }
+
+    async getApplicationsByStatus(
+        status: ApplicationStatus
+    ): Promise<Application | Application[]> {
+        const db = this.getDb();
+        return await db.manyOrNone(
+            `SELECT id, company_name as "companyName", created_at as "createdAt", 
+            updated_at as "updatedAt", updated_by as "updatedBy", message, 
+            message_response as "messageResponse", status
+                 FROM applications WHERE status = $1;`,
+            status
+        );
+    }
+
     async updateApplicationStatus(
         id: string,
         status: ApplicationStatus
     ): Promise<void> {
         const db = this.getDb();
-        await db.none(`UPDATE applications SET status = $1 WHERE id = $2`, [
-            status,
-            id,
-        ]);
+        const updatedAt = Date.now();
+        await db.none(
+            `UPDATE applications SET status = $1, updated_at = $2 WHERE id = $3`,
+            [status, updatedAt, id]
+        );
     }
 
     async insertReview(review: Review): Promise<void> {

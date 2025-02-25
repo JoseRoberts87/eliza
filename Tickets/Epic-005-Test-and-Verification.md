@@ -20,12 +20,12 @@ Test and Verification
 
 ### Stories
 
-- Story-005-01: Test Application Received - Agent - Stacey
-- Story-005-02: Test Application Completed - Agent - John
-- Story-005-03: Test Application Additional Questions - Agent - David
-- Story-005-04: Test Application Uniqueness - Agent - Jessica
-- Story-005-05: Test Application Review Score - Agent - Michael
-- Story-005-06: Test Application Decision - Agent - Yconic
+- Story-005-01: Test Application Received - Agent
+- Story-005-02: Test Application Completed - Agent
+- Story-005-03: Test Application Additional Questions - Agent
+- Story-005-04: Test Application Uniqueness - Agent
+- Story-005-05: Test Application Review Score - Agent
+- Story-005-06: Test Application Decision - Agent
 
 ### Status
 

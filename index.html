@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>VC Accelerator Application</title>
+        <link rel="stylesheet" href="styles.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&family=Space+Mono&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+    <body>
+        <div class="parallax-wrapper">
+            <svg
+                class="parallax"
+                viewBox="0 0 1200 800"
+                preserveAspectRatio="xMidYMax slice"
+            >
+                <!-- Background gradient -->
+                <defs>
+                    <!-- Dark tech background gradient -->
+                    <linearGradient
+                        id="bg-gradient"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                    >
+                        <stop offset="0%" stop-color="#0A0A0A" />
+                        <stop offset="100%" stop-color="#1A1A1A" />
+                    </linearGradient>
+                </defs>
+
+                <!-- Background -->
+                <rect width="100%" height="100%" fill="url(#bg-gradient)" />
+
+                <!-- Add these elements inside the svg, before the process steps -->
+                <defs>
+                    <!-- Circuit board pattern -->
+                    <pattern
+                        id="circuit-pattern"
+                        x="0"
+                        y="0"
+                        width="100"
+                        height="100"
+                        patternUnits="userSpaceOnUse"
+                    >
+                        <!-- Horizontal lines -->
+                        <path
+                            d="M10 50h80"
+                            stroke="#FF4500"
+                            stroke-width="0.5"
+                            opacity="0.2"
+                        />
+                        <!-- Vertical lines -->
+                        <path
+                            d="M50 10v80"
+                            stroke="#FF4500"
+                            stroke-width="0.5"
+                            opacity="0.2"
+                        />
+                        <!-- Connection points -->
+                        <circle
+                            cx="50"
+                            cy="50"
+                            r="3"
+                            fill="#FF4500"
+                            opacity="0.3"
+                        />
+                        <circle
+                            cx="10"
+                            cy="50"
+                            r="2"
+                            fill="#FF4500"
+                            opacity="0.2"
+                        />
+                        <circle
+                            cx="90"
+                            cy="50"
+                            r="2"
+                            fill="#FF4500"
+                            opacity="0.2"
+                        />
+                    </pattern>
+
+                    <!-- Data flow gradient -->
+                    <linearGradient id="data-flow" x1="0" y1="0" x2="1" y2="0">
+                        <stop
+                            offset="0%"
+                            stop-color="#FF4500"
+                            stop-opacity="0"
+                        />
+                        <stop
+                            offset="50%"
+                            stop-color="#FF4500"
+                            stop-opacity="0.5"
+                        />
+                        <stop
+                            offset="100%"
+                            stop-color="#FF4500"
+                            stop-opacity="0"
+                        />
+                    </linearGradient>
+
+                    <!-- Add this after the circuit pattern -->
+                    <pattern
+                        id="grid-pattern"
+                        x="0"
+                        y="0"
+                        width="40"
+                        height="40"
+                        patternUnits="userSpaceOnUse"
+                    >
+                        <rect
+                            width="40"
+                            height="40"
+                            fill="none"
+                            stroke="#FF4500"
+                            stroke-width="0.5"
+                            opacity="0.1"
+                        />
+                        <circle
+                            cx="20"
+                            cy="20"
+                            r="1"
+                            fill="#FF4500"
+                            opacity="0.2"
+                        />
+                    </pattern>
+                </defs>
+
+                <!-- Add tech background elements -->
+                <g id="tech-bg">
+                    <!-- Circuit board background -->
+                    <rect
+                        width="100%"
+                        height="100%"
+                        fill="url(#circuit-pattern)"
+                    />
+
+                    <!-- Data streams -->
+                    <g id="data-streams">
+                        <!-- These will be populated by JavaScript -->
+                    </g>
+
+                    <!-- CPU/Processing Unit Visualization -->
+                    <!--
+                    <g id="cpu-unit" transform="translate(600, 300)">
+                        <rect width="200" height="200" fill="#1a2634" rx="10" />
+                        <rect
+                            width="180"
+                            height="180"
+                            x="10"
+                            y="10"
+                            fill="none"
+                            stroke="#3498DB"
+                            stroke-width="0.5"
+                        />
+                        <circle
+                            cx="100"
+                            cy="100"
+                            r="40"
+                            fill="none"
+                            stroke="#3498DB"
+                            stroke-width="1"
+                        />
+                        <path
+                            d="M60 100h80M100 60v80"
+                            stroke="#3498DB"
+                            stroke-width="1"
+                        />
+                    </g>
+                    -->
+                </g>
+
+                <!-- Application Process Steps -->
+                <g id="process-steps">
+                    <!-- Yconic Logo Card (Starting point) -->
+                    <g id="step1" class="step">
+                        <image
+                            href="public/ycoai_logo_transparent_background.png"
+                            x="50"
+                            y="50"
+                            width="200"
+                            height="200"
+                            preserveAspectRatio="xMidYMid meet"
+                        />
+                    </g>
+
+                    <!-- Application Received -->
+                    <g id="step2" class="step">
+                        <rect
+                            width="300"
+                            height="200"
+                            rx="15"
+                            fill="#0D0D0D"
+                            stroke="#FF4500"
+                            stroke-width="2"
+                        />
+                        <text
+                            x="150"
+                            y="60"
+                            text-anchor="middle"
+                            fill="#FF4500"
+                            class="step-title"
+                        >
+                            SUBMISSION
+                        </text>
+                        <text
+                            x="150"
+                            y="100"
+                            text-anchor="middle"
+                            fill="#888"
+                            class="step-detail"
+                        >
+                            Agent monitors for new
+                        </text>
+                        <text
+                            x="150"
+                            y="130"
+                            text-anchor="middle"
+                            fill="#888"
+                            class="step-detail"
+                        >
+                            application submissions
+                        </text>
+                        <text
+                            x="150"
+                            y="160"
+                            text-anchor="middle"
+                            fill="#888"
+                            class="step-detail"
+                        >
+                            and creates memory record
+                        </text>
+                    </g>
+
+                    <!-- Initial Review -->
+                    <g id="step3" class="step">
+                        <rect
+                            width="300"
+                            height="200"
+                            rx="15"
+                            fill="#0D0D0D"
+                            stroke="#FF4500"
+                            stroke-width="2"
+                        />
+                        <text
+                            x="150"
+                            y="60"
+                            text-anchor="middle"
+                            fill="#FF4500"
+                            class="step-title"
+                        >
+                            INITIAL REVIEW
+                        </text>
+                        <text
+                            x="150"
+                            y="100"
+                            text-anchor="middle"
+                            fill="#888"
+                            class="step-detail"
+                        >
+                            Agent analyzes form completion
+                        </text>
+                        <text
+                            x="150"
+                            y="130"
+                            text-anchor="middle"
+                            fill="#888"
+                            class="step-detail"
+                        >
+                            and generates review score
+                        </text>
+                        <text
+                            x="150"
+                            y="160"
+                            text-anchor="middle"
+                            fill="#888"
+                            class="step-detail"
+                        >
+                            based on criteria
+                        </text>
+                    </g>
+
+                    <!-- Uniqueness Check -->
+                    <g id="step4" class="step">
+                        <rect
+                            width="300"
+                            height="200"
+                            rx="15"
+                            fill="#0D0D0D"
+                            stroke="#FF4500"
+                            stroke-width="2"
+                        />
+                        <text
+                            x="150"
+                            y="60"
+                            text-anchor="middle"
+                            fill="#FF4500"
+                            class="step-title"
+                        >
+                            UNIQUENESS CHECK
+                        </text>
+                        <text
+                            x="150"
+                            y="100"
+                            text-anchor="middle"
+                            fill="#888"
+                            class="step-detail"
+                        >
+                            Agent evaluates application
+                        </text>
+                        <text
+                            x="150"
+                            y="130"
+                            text-anchor="middle"
+                            fill="#888"
+                            class="step-detail"
+                        >
+                            for uniqueness and novelty
+                        </text>
+                        <text
+                            x="150"
+                            y="160"
+                            text-anchor="middle"
+                            fill="#888"
+                            class="step-detail"
+                        >
+                            against existing submissions
+                        </text>
+                    </g>
+
+                    <!-- Decision -->
+                    <g id="step5" class="step">
+                        <rect
+                            width="300"
+                            height="200"
+                            rx="15"
+                            fill="#0D0D0D"
+                            stroke="#FF4500"
+                            stroke-width="2"
+                        />
+                        <text
+                            x="150"
+                            y="60"
+                            text-anchor="middle"
+                            fill="#FF4500"
+                            class="step-title"
+                        >
+                            DECISION
+                        </text>
+                        <text
+                            x="150"
+                            y="100"
+                            text-anchor="middle"
+                            fill="#888"
+                            class="step-detail"
+                        >
+                            Agent processes scores
+                        </text>
+                        <text
+                            x="150"
+                            y="130"
+                            text-anchor="middle"
+                            fill="#888"
+                            class="step-detail"
+                        >
+                            and makes final decision
+                        </text>
+                        <text
+                            x="150"
+                            y="160"
+                            text-anchor="middle"
+                            fill="#888"
+                            class="step-detail"
+                        >
+                            based on all criteria
+                        </text>
+                    </g>
+
+                    <!-- Response -->
+                    <g id="step6" class="step">
+                        <rect
+                            width="300"
+                            height="200"
+                            rx="15"
+                            fill="#0D0D0D"
+                            stroke="#FF4500"
+                            stroke-width="2"
+                        />
+                        <text
+                            x="150"
+                            y="60"
+                            text-anchor="middle"
+                            fill="#FF4500"
+                            class="step-title"
+                        >
+                            RESPONSE
+                        </text>
+                        <text
+                            x="150"
+                            y="100"
+                            text-anchor="middle"
+                            fill="#888"
+                            class="step-detail"
+                        >
+                            Agent generates personalized
+                        </text>
+                        <text
+                            x="150"
+                            y="130"
+                            text-anchor="middle"
+                            fill="#888"
+                            class="step-detail"
+                        >
+                            email response based on
+                        </text>
+                        <text
+                            x="150"
+                            y="160"
+                            text-anchor="middle"
+                            fill="#888"
+                            class="step-detail"
+                        >
+                            review and decision
+                        </text>
+                    </g>
+                </g>
+
+                <!-- Add connecting lines between steps -->
+                <path
+                    id="process-path"
+                    class="circuit-path"
+                    d="M..."
+                    stroke="#FF4500"
+                    stroke-width="2"
+                    fill="none"
+                />
+
+                <!-- Decorative elements -->
+                <g id="particles"></g>
+            </svg>
+        </div>
+
+        <div class="content">
+            <section class="section">
+                <h1>VC Accelerator Application</h1>
+                <p>Intelligent application processing powered by AI</p>
+            </section>
+
+            <section class="section">
+                <h2>How It Works</h2>
+                <p>
+                    Our AI agent tracks and processes your application through
+                    multiple stages
+                </p>
+            </section>
+
+            <section class="section">
+                <h2>Get Started</h2>
+                <button class="cta-button">Submit Application</button>
+            </section>
+
+            <div class="scroll-indicator">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="#ECF0F1">
+                    <path
+                        d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"
+                    />
+                </svg>
+            </div>
+        </div>
+
+        <script src="script.js"></script>
+    </body>
+</html>

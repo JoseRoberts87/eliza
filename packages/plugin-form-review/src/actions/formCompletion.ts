@@ -17,6 +17,7 @@ import {
 } from "./types";
 import { formCompletionTemplate } from "./templates";
 import { z } from "zod";
+import { ApplicationStatus, DatabaseService, EnigmaInteractionClient } from "@elizaos/client-enigma";
 
 elizaLogger.info("VALIDATE_APPLICATION_FORM loaded");
 
@@ -27,6 +28,7 @@ export const formCompletionAction: Action = {
         "Validates VC Accelerator applications by checking form completion and required fields",
 
     validate: async (runtime: IAgentRuntime, message: Memory) => {
+        elizaLogger.info("APPLICATION_FORM_COMPLETION validator...");
         // Validate that we have an application to check
         // return (
         //     message.content?.type === "application" && !!message.content.data
@@ -40,7 +42,7 @@ export const formCompletionAction: Action = {
         _options?: any,
         callback?: HandlerCallback
     ) => {
-        elizaLogger.info("VALIDATE_APPLICATION_FORM called");
+        elizaLogger.info("APPLICATION_FORM_COMPLETION handler...");
 
         try {
             if (!state) {
@@ -156,24 +158,24 @@ export const formCompletionAction: Action = {
             }
 
             // Generate response message
-            let responseText = `Form Validation Results:
-            - Completion Status: ${result.isComplete ? "Complete" : "Incomplete"}
-            - Score: ${result.score}/100
+            // let responseText = `Form Validation Results:
+            // - Completion Status: ${result.isComplete ? "Complete" : "Incomplete"}
+            // - Score: ${result.score}/100
 
-            Score Breakdown:
-            - Company Information: ${Math.min(30, score)}%
-            - Product & Market Information: ${Math.min(40, Math.max(0, score - 30))}%
-            - Competition & Strategy: ${Math.min(30, Math.max(0, score - 70))}%
-            ${result.missingFields.length > 0 ? `\nMissing Required Fields:\n${result.missingFields.map((f) => `- ${f}`).join("\n")}` : ""}
-            ${result.validationErrors.length > 0 ? `\nValidation Errors:\n${result.validationErrors.map((e) => `- ${e}`).join("\n")}` : ""}
+            // Score Breakdown:
+            // - Company Information: ${Math.min(30, score)}%
+            // - Product & Market Information: ${Math.min(40, Math.max(0, score - 30))}%
+            // - Competition & Strategy: ${Math.min(30, Math.max(0, score - 70))}%
+            // ${result.missingFields.length > 0 ? `\nMissing Required Fields:\n${result.missingFields.map((f) => `- ${f}`).join("\n")}` : ""}
+            // ${result.validationErrors.length > 0 ? `\nValidation Errors:\n${result.validationErrors.map((e) => `- ${e}`).join("\n")}` : ""}
             
-            ${formResult.websiteUrl ? `\nOptional Fields Provided:\n- Website URL` : ""}
-            ${formResult.monthlyRecurringRevenue ? `- Monthly Recurring Revenue` : ""}
-            ${formResult.competitors?.competitor2 ? `- Second Competitor` : ""}
-            ${formResult.competitors?.competitor3 ? `- Third Competitor` : ""}`;
+            // ${formResult.websiteUrl ? `\nOptional Fields Provided:\n- Website URL` : ""}
+            // ${formResult.monthlyRecurringRevenue ? `- Monthly Recurring Revenue` : ""}
+            // ${formResult.competitors?.competitor2 ? `- Second Competitor` : ""}
+            // ${formResult.competitors?.competitor3 ? `- Third Competitor` : ""}`;
 
             if (callback) {
-                callback({ text: responseText }, []);
+                callback({ text: "application for passed completion check" }, []);
             }
         } catch (error) {
             elizaLogger.error("Error validating application:", error);

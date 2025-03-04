@@ -154,10 +154,11 @@ export class EnigmaInteractionClient {
                 //     submission
                 // );
 
-                // await this.client.db.updateApplicationStatus(
-                //     scoredApplication.id,
-                //     ApplicationStatus.SCORED
-                // );
+                await this.client.db.updateApplicationStatus(
+                    scoredApplication.id,
+                    ApplicationStatus.ACCEPTED
+                );
+
 
                 elizaLogger.info("#######################################");
                 elizaLogger.info("CONGRATULATIONS!!!!!!!!!!!!");

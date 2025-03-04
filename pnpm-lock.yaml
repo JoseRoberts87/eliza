@@ -1105,7 +1105,40 @@ importers:
         specifier: ^1.2.1
         version: 1.2.1(@types/node@22.12.0)(jsdom@25.0.1(bufferutil@4.0.9)(canvas@2.11.2(encoding@0.1.13))(utf-8-validate@6.0.5))(terser@5.37.0)
 
-<<<<<<< HEAD
+  packages/client-email:
+    dependencies:
+      '@elizaos/core':
+        specifier: workspace:*
+        version: link:../core
+      email-templates:
+        specifier: ^11.1.1
+        version: 11.1.1(@babel/core@7.26.7)(ejs@3.1.10)(encoding@0.1.13)(handlebars@4.7.8)(hogan.js@3.0.2)(mustache@4.2.0)(pug@3.0.3)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(underscore@1.13.7)
+      handlebars:
+        specifier: ^4.7.8
+        version: 4.7.8
+      nodemailer:
+        specifier: ^6.9.8
+        version: 6.10.0
+    devDependencies:
+      '@types/email-templates':
+        specifier: ^10.0.4
+        version: 10.0.4(encoding@0.1.13)
+      '@types/nodemailer':
+        specifier: ^6.4.14
+        version: 6.4.17
+      eslint:
+        specifier: ^8.56.0
+        version: 8.57.1
+      tsup:
+        specifier: ^8.0.1
+        version: 8.3.6(@swc/core@1.10.12(@swc/helpers@0.5.15))(jiti@2.4.2)(postcss@8.5.1)(tsx@4.19.2)(typescript@5.7.3)(yaml@2.7.0)
+      typescript:
+        specifier: ^5.3.3
+        version: 5.7.3
+      vitest:
+        specifier: ^1.2.1
+        version: 1.2.1(@types/node@22.12.0)(jsdom@25.0.1(bufferutil@4.0.9)(canvas@2.11.2(encoding@0.1.13))(utf-8-validate@6.0.5))(terser@5.37.0)
+
   packages/client-enigma:
     dependencies:
       '@elizaos/adapter-postgres':
@@ -1148,41 +1181,6 @@ importers:
       typescript:
         specifier: ^5.0.3
         version: 5.7.3
-=======
-  packages/client-email:
-    dependencies:
-      '@elizaos/core':
-        specifier: workspace:*
-        version: link:../core
-      email-templates:
-        specifier: ^11.1.1
-        version: 11.1.1(@babel/core@7.26.7)(ejs@3.1.10)(encoding@0.1.13)(handlebars@4.7.8)(hogan.js@3.0.2)(mustache@4.2.0)(pug@3.0.3)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(underscore@1.13.7)
-      handlebars:
-        specifier: ^4.7.8
-        version: 4.7.8
-      nodemailer:
-        specifier: ^6.9.8
-        version: 6.10.0
-    devDependencies:
-      '@types/email-templates':
-        specifier: ^10.0.4
-        version: 10.0.4(encoding@0.1.13)
-      '@types/nodemailer':
-        specifier: ^6.4.14
-        version: 6.4.17
-      eslint:
-        specifier: ^8.56.0
-        version: 8.57.1
-      tsup:
-        specifier: ^8.0.1
-        version: 8.3.6(@swc/core@1.10.12(@swc/helpers@0.5.15))(jiti@2.4.2)(postcss@8.5.1)(tsx@4.19.2)(typescript@5.7.3)(yaml@2.7.0)
-      typescript:
-        specifier: ^5.3.3
-        version: 5.7.3
-      vitest:
-        specifier: ^1.2.1
-        version: 1.2.1(@types/node@22.12.0)(jsdom@25.0.1(bufferutil@4.0.9)(canvas@2.11.2(encoding@0.1.13))(utf-8-validate@6.0.5))(terser@5.37.0)
->>>>>>> develop
 
   packages/client-farcaster:
     dependencies:
@@ -3386,11 +3384,7 @@ importers:
         version: 7.0.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)
       '@lit-protocol/aw-tool':
         specifier: '*'
-<<<<<<< HEAD
-        version: 0.1.0-22(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)
-=======
         version: 0.1.0-23(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)
->>>>>>> develop
       '@lit-protocol/constants':
         specifier: ^7.0.4
         version: 7.0.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)
@@ -9529,13 +9523,8 @@ packages:
   '@lit-protocol/auth-helpers@7.0.4':
     resolution: {integrity: sha512-oOHB+XkqMh9JKelnE67n3pGaszMCEr5v/ZATt9I9kpeoZ6MhShNf/4Wg6lGgBrRJhtHROM3zIJRZKl9Zmy7aSg==}
 
-<<<<<<< HEAD
-  '@lit-protocol/aw-tool@0.1.0-22':
-    resolution: {integrity: sha512-crtqRr/m2M7itpdUtLxW1gYaZCUHUaUUc4ZBlt41f789K7PtT7bM/UvH8ppV6FGZ+zjqGsKnc6hXj6BU0vACyQ==}
-=======
   '@lit-protocol/aw-tool@0.1.0-23':
     resolution: {integrity: sha512-1comgyTqhYt4irT4+sJJoMSBUvJovw8MYhIzU/H2plHI5OYpWj3M4jZd5xjDiPgv7uc4RpPbEFxYRv4Kth953g==}
->>>>>>> develop
 
   '@lit-protocol/bls-sdk@2.1.62':
     resolution: {integrity: sha512-UjNjycoNXOEoLH/foIJx1L9PLL5OxmHcCD/mFXr4KSeQV/v4srvGNpY/4ng7+k9sJEbvwRwv+FB07ng3/Ihacg==}
@@ -15382,14 +15371,12 @@ packages:
     resolution: {integrity: sha512-FVnvrKJwpt9LP2lAMl8qZswRNm3T4q9CON+bxldk2iwk3FFpuwhx2FfinyitizWHsVYyaY+y5JzDR0rCMV5yTQ==}
     engines: {node: '>=12.0.0'}
 
-<<<<<<< HEAD
+  assert-never@1.4.0:
+    resolution: {integrity: sha512-5oJg84os6NMQNl27T9LnZkvvqzvAnHu03ShCnoj6bsJwS7L8AO4lf+C/XjK/nvzEqQB744moC6V128RucQd1jA==}
+
   assert-options@0.8.2:
     resolution: {integrity: sha512-XaXoMxY0zuwAb0YuZjxIm8FeWvNq0aWNIbrzHhFjme8Smxw4JlPoyrAKQ6808k5UvQdhvnWqHZCphq5mXd4TDA==}
     engines: {node: '>=10.0.0'}
-=======
-  assert-never@1.4.0:
-    resolution: {integrity: sha512-5oJg84os6NMQNl27T9LnZkvvqzvAnHu03ShCnoj6bsJwS7L8AO4lf+C/XjK/nvzEqQB744moC6V128RucQd1jA==}
->>>>>>> develop
 
   assert-plus@1.0.0:
     resolution: {integrity: sha512-NfJ4UzBCcQGLDlQq7nHxH+tv3kyZ0hHQqF5BO6J7tNJeP5do1llPr8dZ8zHonfhAu0PHAdMkSo+8o0wxg9lZWw==}
@@ -37843,11 +37830,7 @@ snapshots:
       - typescript
       - utf-8-validate
 
-<<<<<<< HEAD
-  '@lit-protocol/aw-tool@0.1.0-22(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)':
-=======
   '@lit-protocol/aw-tool@0.1.0-23(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)':
->>>>>>> develop
     dependencies:
       '@lit-protocol/constants': 7.0.6(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)
       tslib: 2.8.1
@@ -49881,11 +49864,9 @@ snapshots:
       pvutils: 1.1.3
       tslib: 2.8.1
 
-<<<<<<< HEAD
-  assert-options@0.8.2: {}
-=======
   assert-never@1.4.0: {}
->>>>>>> develop
+
+  assert-options@0.8.2: {}
 
   assert-plus@1.0.0: {}
 

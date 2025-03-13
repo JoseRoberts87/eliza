@@ -2,6 +2,7 @@ import { type IAgentRuntime, Memory, elizaLogger } from "@elizaos/core";
 import { ClientBase } from "./base";
 import { DatabaseService } from "./database";
 import { ApplicationStatus, Application, Submission } from "./type";
+import { EmailContent } from "@elizaos/client-email";
 import * as fs from "fs";
 export class EnigmaInteractionClient {
     client: ClientBase;
@@ -35,95 +36,19 @@ export class EnigmaInteractionClient {
         try {
             elizaLogger.info("Processing interactions...");
 
-            const receivedApplication: Application =
+            const uniqueApplication: Application =
                 await this.client.db.getApplicationByStatus(
                     ApplicationStatus.RECEIVED
                 );
             if (
                 this.runtime.character.name === "yconicReceiver" &&
-                receivedApplication.status === ApplicationStatus.RECEIVED
-            ) {
-                const submission: Submission = JSON.parse(
-                    receivedApplication.message
-                );
-                const success = await this.callYconicAgent(
-                    "yconicReceiver",
-                    "550e8400-e29b-41d4-a716-446655440001",
-                    "VALIDATE_APPLICATION_FORM",
-                    submission
-                );
-                if (success) {
-                    await this.client.db.updateApplicationStatus(
-                        receivedApplication.id,
-                        ApplicationStatus.FORM_COMPLETED
-                    );
-                }
-            }
-
-            const completedApplication: Application =
-                await this.client.db.getApplicationByStatus(
-                    ApplicationStatus.FORM_COMPLETED
-                );
-            if (
-                this.runtime.character.name === "yconicCompletion" &&
-                completedApplication.status === ApplicationStatus.FORM_COMPLETED
-            ) {
-                const submission: Submission = JSON.parse(
-                    completedApplication.message
-                );
-                const success = await this.callYconicAgent(
-                    "yconicCompletion",
-                    "550e8400-e29b-41d4-a716-446655440002",
-                    "ANALYZE_ADDITIONAL_QUESTIONS",
-                    submission
-                );
-                if (success) {
-                    await this.client.db.updateApplicationStatus(
-                        completedApplication.id,
-                        ApplicationStatus.ADDITIONAL_QUESTIONS
-                    );
-                }
-            }
-
-            const AdditionalQuestonsApplication: Application =
-                await this.client.db.getApplicationByStatus(
-                    ApplicationStatus.ADDITIONAL_QUESTIONS
-                );
-            if (
-                this.runtime.character.name === "yconicSupplemental" &&
-                AdditionalQuestonsApplication.status ===
-                    ApplicationStatus.ADDITIONAL_QUESTIONS
-            ) {
-                const submission: Submission = JSON.parse(
-                    AdditionalQuestonsApplication.message
-                );
-                const success = await this.callYconicAgent(
-                    "yconicSupplemental",
-                    "550e8400-e29b-41d4-a716-446655440003",
-                    "ASSESS_UNIQUENESS",
-                    submission
-                );
-                if (success) {
-                    await this.client.db.updateApplicationStatus(
-                        AdditionalQuestonsApplication.id,
-                        ApplicationStatus.UNIQUE_FORM
-                    );
-                }
-            }
-
-            const uniqueApplication: Application =
-                await this.client.db.getApplicationByStatus(
-                    ApplicationStatus.UNIQUE_FORM
-                );
-            if (
-                this.runtime.character.name === "yconicUniqueness" &&
-                uniqueApplication.status === ApplicationStatus.UNIQUE_FORM
+                uniqueApplication.status === ApplicationStatus.RECEIVED
             ) {
                 const submission: Submission = JSON.parse(
                     uniqueApplication.message
                 );
                 const success = await this.callYconicAgent(
-                    "yconicUniqueness",
+                    "yconicReceiver",
                     "550e8400-e29b-41d4-a716-446655440004",
                     "SCORE_GENERATOR",
                     submission
@@ -144,25 +69,52 @@ export class EnigmaInteractionClient {
                 this.runtime.character.name === "yconicScore" &&
                 scoredApplication.status === ApplicationStatus.SCORED
             ) {
-                // const submission: Submission = JSON.parse(
-                //     scoredApplication.message
-                // );
-                // const success = await this.callYconicAgent(
-                //     "yconicScore",
-                //     "550e8400-e29b-41d4-a716-446655440004",
-                //     "ANALYZE_ADDITIONAL_QUESTIONS",
-                //     submission
-                // );
-
-                await this.client.db.updateApplicationStatus(
-                    scoredApplication.id,
-                    ApplicationStatus.ACCEPTED
+                const submission: Submission = JSON.parse(
+                    scoredApplication.message
+                );
+                const success = await this.callYconicAgent(
+                    "yconicScore",
+                    "550e8400-e29b-41d4-a716-446655440005",
+                    "ACCEPT_APPLICATION",
+                    submission
                 );
 
+                if (success) {
+                    try {
+                        elizaLogger.info("runtime.clients:", this.runtime.clients.email );
+                        elizaLogger.info("runtime.agentId@@@@:", this.runtime.agentId);
+                        const emailContent: EmailContent = {
+                            to: "webterpr@gmail.com",
+                            subject: "Yconic Application Accepted",
+                            text: "Congratulations! Your application has been accepted. Please follow the instructions to complete the process.",
+                        };
+                        elizaLogger.info("Sending email...");
 
-                elizaLogger.info("#######################################");
-                elizaLogger.info("CONGRATULATIONS!!!!!!!!!!!!");
-                elizaLogger.info("#######################################");
+                        elizaLogger.info("this.runtime.clients:", this.runtime.clients);
+                        elizaLogger.info("this.runtime.clients.email:", this.runtime.clients.email);
+
+
+                        // this.runtime.clients.email.sendEmail(emailContent);
+                        elizaLogger.info("Email sent...");
+
+                        await this.client.db.updateApplicationStatus(
+                            scoredApplication.id,
+                            ApplicationStatus.ACCEPTED
+                        );
+
+                        elizaLogger.info(
+                            "#######################################"
+                        );
+                        elizaLogger.info("CONGRATULATIONS!!!!!!!!!!!!");
+                        elizaLogger.info(
+                            "#######################################"
+                        );
+                    } catch (error) {
+                        elizaLogger.error("Error sending email:", error);
+                    }
+                } else {
+                    elizaLogger.error("Error accepting application");
+                }
             }
         } catch (error) {
             elizaLogger.error("Error handling Enigma interactions:", error);

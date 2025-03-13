@@ -21,6 +21,7 @@
     "dependencies": {
         "@elizaos/core": "workspace:*",
         "@elizaos/adapter-postgres": "workspace:*",
+        "@elizaos/client-email": "workspace:*",
         "pg": "^8.11.3",
         "pg-promise": "^11.5.4"
     },

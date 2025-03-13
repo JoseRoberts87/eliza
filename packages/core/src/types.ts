@@ -664,6 +664,7 @@ export enum Clients {
     XMTP = "xmtp",
     DEVA = "deva",
     ENIGMA = "enigma",
+    EMAIL = "email",
 }
 
 export interface IAgentConfig {

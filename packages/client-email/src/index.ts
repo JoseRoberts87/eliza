@@ -1,7 +1,13 @@
 import nodemailer from "nodemailer";
 import EmailTemplates from "email-templates";
 import path from "path";
-import { IAgentRuntime, Memory, UUID } from "@elizaos/core";
+import {
+    Client,
+    elizaLogger,
+    IAgentRuntime,
+    Memory,
+    UUID,
+} from "@elizaos/core";
 import {
     EmailClientConfig,
     EmailContent,
@@ -12,7 +18,7 @@ import { QueueManager } from "./queueManager";
 import { TemplateManager } from "./templateManager";
 import { ContextGenerator } from "./contextGenerator";
 
-export class EmailClient {
+class EmailClientManager {
     private transporter: nodemailer.Transporter;
     private emailTemplates: EmailTemplates;
     private templateManager: TemplateManager;
@@ -22,7 +28,7 @@ export class EmailClient {
     private runtime: IAgentRuntime;
     private statusMap: Map<string, EmailStatus> = new Map();
 
-    constructor(config: EmailClientConfig, runtime: IAgentRuntime) {
+    constructor(runtime: IAgentRuntime, config: EmailClientConfig) {
         this.config = config;
         this.runtime = runtime;
         this.transporter = nodemailer.createTransport(config.smtp);
@@ -40,8 +46,6 @@ export class EmailClient {
                 options: { extension: "hbs" },
             },
         });
-
-        this.setupQueueHandlers();
     }
 
     private setupQueueHandlers(): void {
@@ -85,7 +89,8 @@ export class EmailClient {
         };
     }
 
-    public async sendEmail(content: EmailContent): Promise<Memory> {
+    public async sendEmail(content: EmailContent){
+        elizaLogger.info("EmailContent:");
         try {
             let html = "";
             if (content.template) {
@@ -94,6 +99,7 @@ export class EmailClient {
                     content.context || {}
                 );
             }
+            elizaLogger.info("content.to:", content.to);
 
             const mailOptions = {
                 from: this.config.from,
@@ -103,30 +109,10 @@ export class EmailClient {
                 html: html || content.text || "",
             };
 
-            const info = await this.transporter.sendMail(mailOptions);
+            elizaLogger.info("Sending email to:", mailOptions.to);
 
-            const memory: Memory = {
-                id: info.messageId as UUID,
-                userId: this.runtime.agentId,
-                agentId: this.runtime.agentId,
-                roomId: content.to as UUID,
-                content: {
-                    ...content,
-                    type: content.type || "email",
-                    text:
-                        content.text ||
-                        `Email sent: ${content.subject}\nTo: ${content.to}`,
-                },
-                createdAt: Date.now(),
-            };
-
-            await this.runtime.messageManager.createMemory(memory);
-            await this.updateEmailStatus(info.messageId, {
-                status: "delivered",
-                deliveredAt: new Date(),
-            });
-
-            return memory;
+            await this.transporter.sendMail(mailOptions);
+            elizaLogger.info("Email sent to:", mailOptions.to);
         } catch (error) {
             console.error("Failed to send email:", error);
             // Create a temporary ID for failed emails
@@ -169,5 +155,41 @@ export class EmailClient {
         });
     }
 }
+
+export const EmailClientInterface: Client = {
+    async start(runtime: IAgentRuntime) {
+        elizaLogger.info("Starting email client");
+        const config: EmailClientConfig = {
+            smtp: {
+                host: process.env.SMTP_HOST || "smtp.gmail.com",
+                port: 465, // Gmail's SSL port
+                secure: true, // Use SSL
+                auth: {
+                    user: process.env.SMTP_USER || "",
+                    pass: process.env.SMTP_PASS || "",
+                },
+            },
+            from: process.env.SMTP_FROM || "",
+            templatesDir: path.join(
+                process.cwd(),
+                "packages",
+                "client-email",
+                "templates"
+            ),
+        };
+        elizaLogger.info("Email client config", config);
+        elizaLogger.info("runtime.agentId:!!!!", runtime.agentId);
+
+
+        const manager = new EmailClientManager(runtime, config);
+        return manager;
+    },
+
+    async stop(runtime: IAgentRuntime) {
+        elizaLogger.warn("Email client does not support stopping yet");
+    },
+};
+
+export default EmailClientInterface;
 
 export * from "./types";

@@ -32,7 +32,6 @@ export class EnigmaInteractionClient {
 
     async handleInteractions() {
         elizaLogger.info("Checking Enigma interactions...");
-        elizaLogger.info(this.runtime.character.name);
         try {
             elizaLogger.info("Processing interactions...");
 
@@ -65,6 +64,7 @@ export class EnigmaInteractionClient {
                 await this.client.db.getApplicationByStatus(
                     ApplicationStatus.SCORED
                 );
+            elizaLogger.info("scoredApplication:", scoredApplication.status, this.runtime.character.name);
             if (
                 this.runtime.character.name === "yconicScore" &&
                 scoredApplication.status === ApplicationStatus.SCORED
@@ -81,26 +81,24 @@ export class EnigmaInteractionClient {
 
                 if (success) {
                     try {
-                        elizaLogger.info("runtime.clients:", this.runtime.clients.email );
                         elizaLogger.info("runtime.agentId@@@@:", this.runtime.agentId);
                         const emailContent: EmailContent = {
                             to: "webterpr@gmail.com",
                             subject: "Yconic Application Accepted",
                             text: "Congratulations! Your application has been accepted. Please follow the instructions to complete the process.",
                         };
-                        elizaLogger.info("Sending email...");
 
-                        elizaLogger.info("this.runtime.clients:", this.runtime.clients);
-                        elizaLogger.info("this.runtime.clients.email:", this.runtime.clients.email);
+                        elizaLogger.info(this.runtime.clients.email);
+                        elizaLogger.info("this.runtime.clients.email:")
 
 
-                        // this.runtime.clients.email.sendEmail(emailContent);
+                        this.runtime.clients.email.sendEmail(emailContent);
                         elizaLogger.info("Email sent...");
 
-                        await this.client.db.updateApplicationStatus(
-                            scoredApplication.id,
-                            ApplicationStatus.ACCEPTED
-                        );
+                        // await this.client.db.updateApplicationStatus(
+                        //     scoredApplication.id,
+                        //     ApplicationStatus.ACCEPTED
+                        // );
 
                         elizaLogger.info(
                             "#######################################"

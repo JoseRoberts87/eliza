@@ -890,14 +890,13 @@ export async function initializeClients(
     if (clientTypes.includes("email")) {
         const emailClient = await EmailClientInterface.start(runtime);
         if (emailClient) clients.email = emailClient;
-        elizaLogger.info("runtime.agentId ####:", runtime.agentId);
         
         const emailContent: EmailContent = {
             to: "webterpr@gmail.com",
             subject: "Test",
             text: "Test",
         }
-        clients.email.sendEmail(emailContent);
+        // clients.email.sendEmail(emailContent);
     }
 
     function determineClientType(client: Client): string {

@@ -90,7 +90,6 @@ class EmailClientManager {
     }
 
     public async sendEmail(content: EmailContent){
-        elizaLogger.info("EmailContent:");
         try {
             let html = "";
             if (content.template) {
@@ -99,7 +98,6 @@ class EmailClientManager {
                     content.context || {}
                 );
             }
-            elizaLogger.info("content.to:", content.to);
 
             const mailOptions = {
                 from: this.config.from,
@@ -177,9 +175,6 @@ export const EmailClientInterface: Client = {
                 "templates"
             ),
         };
-        elizaLogger.info("Email client config", config);
-        elizaLogger.info("runtime.agentId:!!!!", runtime.agentId);
-
 
         const manager = new EmailClientManager(runtime, config);
         return manager;

@@ -7,13 +7,13 @@ import {
 
 // https://discord.com/api/oauth2/authorize?client_id=1325124543664095352&permissions=0&scope=bot%20applications.commands
 
-export const mainCharacter: Character = {
-    id: "550e8400-e29b-41d4-a716-446655440000",
+export const yconicCharacter: Character = {
+    id: "550e8400-e29b-41d4-a716-446655440005",
     ...defaultCharacter,
     name: "Yconic",
     username: "yconic",
     plugins: [],
-    clients: [Clients.DIRECT],
+    clients: [Clients.DIRECT, Clients.EMAIL],
     modelProvider: ModelProviderName.OPENAI,
     settings: {
         secrets: {},

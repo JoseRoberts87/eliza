@@ -94,7 +94,6 @@ import { litPlugin } from "@elizaos/plugin-lit";
 import { mindNetworkPlugin } from "@elizaos/plugin-mind-network";
 import { multiversxPlugin } from "@elizaos/plugin-multiversx";
 import { nearPlugin } from "@elizaos/plugin-near";
-import createNFTCollectionsPlugin from "@elizaos/plugin-nft-collections";
 import { nftGenerationPlugin } from "@elizaos/plugin-nft-generation";
 import { createNodePlugin } from "@elizaos/plugin-node";
 import { obsidianPlugin } from "@elizaos/plugin-obsidian";
@@ -153,12 +152,13 @@ import { MongoClient } from "mongodb";
 import { quickIntelPlugin } from "@elizaos/plugin-quick-intel";
 
 import { EnigmaClientInterface } from "@elizaos/client-enigma";
-
+import { EmailClientInterface, EmailContent } from "@elizaos/client-email";
 import { yconicReceiverCharacter } from "./yconicReceiverCharacter";
-import { yconicCompletionCharacter } from "./yconicCompletionCharacter";
-import { yconicSupplementalCharacter } from "./yconicSupplementalCharacter";
-import { yconicUniquenessCharacter } from "./yconicUniquenessCharacter";
+// import { yconicCompletionCharacter } from "./yconicCompletionCharacter";
+// import { yconicSupplementalCharacter } from "./yconicSupplementalCharacter";
+// import { yconicUniquenessCharacter } from "./yconicUniquenessCharacter";
 import { yconicScoreCharacter } from "./yconicScoreCharacter";
+import { yconicCharacter } from "./yconicCharacter";
 
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 const __dirname = path.dirname(__filename); // get the name of the directory
@@ -484,10 +484,11 @@ export async function loadCharacters(
     if (loadedCharacters.length === 0) {
         elizaLogger.info("No characters found, using default character");
         loadedCharacters.push(yconicReceiverCharacter);
-        loadedCharacters.push(yconicCompletionCharacter);
-        loadedCharacters.push(yconicSupplementalCharacter);
-        loadedCharacters.push(yconicUniquenessCharacter);
+        // loadedCharacters.push(yconicCompletionCharacter);
+        // loadedCharacters.push(yconicSupplementalCharacter);
+        // loadedCharacters.push(yconicUniquenessCharacter);
         loadedCharacters.push(yconicScoreCharacter);
+        loadedCharacters.push(yconicCharacter);
     }
 
     return loadedCharacters;
@@ -886,6 +887,18 @@ export async function initializeClients(
         if (enigmaClient) clients.enigma = enigmaClient;
     }
 
+    if (clientTypes.includes("email")) {
+        const emailClient = await EmailClientInterface.start(runtime);
+        if (emailClient) clients.email = emailClient;
+        
+        const emailContent: EmailContent = {
+            to: "webterpr@gmail.com",
+            subject: "Test",
+            text: "Test",
+        }
+        // clients.email.sendEmail(emailContent);
+    }
+
     function determineClientType(client: Client): string {
         // Check if client has a direct type identifier
         if ("type" in client) {
@@ -1212,9 +1225,6 @@ export async function createAgent(
                 : null,
             getSecret(character, "CHAINBASE_API_KEY") ? chainbasePlugin : null,
             getSecret(character, "QUAI_PRIVATE_KEY") ? quaiPlugin : null,
-            getSecret(character, "RESERVOIR_API_KEY")
-                ? createNFTCollectionsPlugin()
-                : null,
             getSecret(character, "ZERO_EX_API_KEY") ? zxPlugin : null,
             getSecret(character, "DKG_PRIVATE_KEY") ? dkgPlugin : null,
             getSecret(character, "PYTH_TESTNET_PROGRAM_KEY") ||
@@ -1452,10 +1462,8 @@ const startAgents = async () => {
     const charactersArg = args.characters || args.character;
     let characters = [
         yconicReceiverCharacter,
-        yconicCompletionCharacter,
-        yconicSupplementalCharacter,
-        yconicUniquenessCharacter,
         yconicScoreCharacter,
+        yconicCharacter,
     ];
 
     if (process.env.IQ_WALLET_ADDRESS && process.env.IQSOlRPC) {

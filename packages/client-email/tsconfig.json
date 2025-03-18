@@ -1,15 +1,9 @@
 {
-    "extends": "../../tsconfig.json",
-    "include": [
-        "src"
-    ],
-    "exclude": [
-        "node_modules",
-        "dist"
-    ],
+    "extends": "../core/tsconfig.json",
     "compilerOptions": {
-        "esModuleInterop": true,
-        "moduleResolution": "node",
-        "allowSyntheticDefaultImports": true
-    }
-}
+        "outDir": "dist",
+        "rootDir": "src"
+    },
+    "include": ["src/**/*.ts"]
+  }
+  

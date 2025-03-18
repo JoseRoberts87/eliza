@@ -891,11 +891,11 @@ export async function initializeClients(
         const emailClient = await EmailClientInterface.start(runtime);
         if (emailClient) clients.email = emailClient;
         
-        const emailContent: EmailContent = {
-            to: "webterpr@gmail.com",
-            subject: "Test",
-            text: "Test",
-        }
+        // const emailContent: EmailContent = {
+        //     to: "webterpr@gmail.com",
+        //     subject: "Test",
+        //     text: "Test",
+        // }
         // clients.email.sendEmail(emailContent);
     }
 

@@ -5,6 +5,8 @@ import {
     Clients,
 } from "@elizaos/core";
 
+import { applicationDecisionPlugin } from "@elizaos/plugin-form-review";
+
 // https://discord.com/api/oauth2/authorize?client_id=1325124543664095352&permissions=0&scope=bot%20applications.commands
 
 export const yconicCharacter: Character = {
@@ -12,7 +14,7 @@ export const yconicCharacter: Character = {
     ...defaultCharacter,
     name: "Yconic",
     username: "yconic",
-    plugins: [],
+    plugins: [applicationDecisionPlugin],
     clients: [Clients.DIRECT, Clients.EMAIL],
     modelProvider: ModelProviderName.OPENAI,
     settings: {

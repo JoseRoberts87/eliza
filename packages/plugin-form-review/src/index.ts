@@ -3,8 +3,8 @@ import { formCompletionAction } from "./actions/formCompletion";
 import { questionsAnalyzerAction } from "./actions/questionsAnalyzer";
 import { uniquenessAssessorAction } from "./actions/uniquenessAssessor";
 import { scoreGeneratorAction } from "./actions/scoreGenerator";
+import { applicationDecisionAction } from "./actions/applicationDecision";
 import { applicationReceivedAction } from "./actions/applicationReceived";
-import { applicationReceivedEvaluator } from "./evaluators/applicationReceivedEvaluator";
 
 export const formCompletionPlugin: Plugin = {
     name: "form-completion",
@@ -40,8 +40,16 @@ export const applicationReceivedPlugin: Plugin = {
     name: "application-received",
     description: "Plugin for recording new application receipts",
     actions: [applicationReceivedAction],
-    evaluators: [applicationReceivedEvaluator],
-    providers: []
+    evaluators: [],
+    providers: [],
+};
+
+export const applicationDecisionPlugin: Plugin = {
+    name: "application-decision",
+    description:
+        "Plugin for evaluating scores and providing recommendations for VC Accelerator application forms",
+    actions: [applicationDecisionAction],
+    evaluators: [],
 };
 
 export default [
@@ -49,5 +57,6 @@ export default [
     questionsAnalyzerPlugin,
     uniquenessAssessorPlugin,
     scoreGeneratorPlugin,
+    applicationDecisionPlugin,
     applicationReceivedPlugin,
 ];

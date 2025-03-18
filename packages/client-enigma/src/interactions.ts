@@ -64,7 +64,11 @@ export class EnigmaInteractionClient {
                 await this.client.db.getApplicationByStatus(
                     ApplicationStatus.SCORED
                 );
-            elizaLogger.info("scoredApplication:", scoredApplication.status, this.runtime.character.name);
+            elizaLogger.info(
+                "scoredApplication:",
+                scoredApplication.status,
+                this.runtime.character.name
+            );
             if (
                 this.runtime.character.name === "yconicScore" &&
                 scoredApplication.status === ApplicationStatus.SCORED
@@ -75,45 +79,41 @@ export class EnigmaInteractionClient {
                 const success = await this.callYconicAgent(
                     "yconicScore",
                     "550e8400-e29b-41d4-a716-446655440005",
-                    "ACCEPT_APPLICATION",
+                    "APPLICATION_DECISION",
                     submission
                 );
-
-                if (success) {
-                    try {
-                        elizaLogger.info("runtime.agentId@@@@:", this.runtime.agentId);
-                        const emailContent: EmailContent = {
-                            to: "webterpr@gmail.com",
-                            subject: "Yconic Application Accepted",
-                            text: "Congratulations! Your application has been accepted. Please follow the instructions to complete the process.",
-                        };
-
-                        elizaLogger.info(this.runtime.clients.email);
-                        elizaLogger.info("this.runtime.clients.email:")
-
-
-                        this.runtime.clients.email.sendEmail(emailContent);
-                        elizaLogger.info("Email sent...");
-
-                        // await this.client.db.updateApplicationStatus(
-                        //     scoredApplication.id,
-                        //     ApplicationStatus.ACCEPTED
-                        // );
-
-                        elizaLogger.info(
-                            "#######################################"
-                        );
-                        elizaLogger.info("CONGRATULATIONS!!!!!!!!!!!!");
-                        elizaLogger.info(
-                            "#######################################"
-                        );
-                    } catch (error) {
-                        elizaLogger.error("Error sending email:", error);
-                    }
-                } else {
-                    elizaLogger.error("Error accepting application");
-                }
             }
+
+            // if (
+            //     this.runtime.character.name === "yconic" &&
+            //     scoredApplication.status === ApplicationStatus.SCORED
+            // ) {
+            //     try {
+            //         elizaLogger.info(
+            //             "runtime.agentId@@@@:",
+            //             this.runtime.agentId
+            //         );
+            //         const emailContent: EmailContent = {
+            //             to: "webterpr@gmail.com",
+            //             subject: "Yconic Application Accepted",
+            //             text: "Congratulations! Your application has been accepted. Please follow the instructions to complete the process.",
+            //         };
+
+
+            //         // await this.client.db.updateApplicationStatus(
+            //         //     scoredApplication.id,
+            //         //     ApplicationStatus.ACCEPTED
+            //         // );
+
+            //         elizaLogger.info("#######################################");
+            //         elizaLogger.info(this.runtime.clients.email);
+
+            //         elizaLogger.info("CONGRATULATIONS!!!!!!!!!!!!");
+            //         elizaLogger.info("#######################################");
+            //     } catch (error) {
+            //         elizaLogger.error("Error sending email:", error);
+            //     }
+            // }
         } catch (error) {
             elizaLogger.error("Error handling Enigma interactions:", error);
         }

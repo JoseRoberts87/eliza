@@ -2837,6 +2837,9 @@ importers:
 
   packages/plugin-form-review:
     dependencies:
+      '@elizaos/client-email':
+        specifier: workspace:*
+        version: link:../client-email
       '@elizaos/client-enigma':
         specifier: workspace:*
         version: link:../client-enigma

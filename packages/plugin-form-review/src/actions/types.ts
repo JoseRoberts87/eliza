@@ -125,3 +125,27 @@ export const isUniquenessAssessmentResult = (
         Array.isArray(obj.recommendations)
     );
 };
+
+export interface ScoreEvaluation {
+    decision: "Approved" | "Pending" | "Rejected";
+    strengths: string[];
+    weaknesses: string[];
+    recommendations: string[];
+    feedback: string;
+}
+
+export const ScoreEvaluationSchema = z.object({
+    decision: z.enum(["Approved", "Pending", "Rejected"]),
+    strengths: z.array(z.string()),
+    weaknesses: z.array(z.string()),
+    recommendations: z.array(z.string()),
+    feedback: z.string()
+});
+
+export interface ScoreBreakdown {
+    uniquenessScore: number;
+    completionScore: number;
+    qualityScore: number;
+    innovationScore: number;
+    totalScore: number;
+}

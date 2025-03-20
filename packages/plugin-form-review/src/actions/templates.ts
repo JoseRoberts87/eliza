@@ -108,3 +108,35 @@ Please provide:
 4. Recommendations for improvement
 5. Potential follow-up questions where needed
 `;
+
+export const scoreEvaluationTemplate = `
+# Application Score Evaluation
+
+You are evaluating the scores of a VC Accelerator application. Based on the provided scores, give a comprehensive evaluation and make a final decision.
+
+## Score Breakdown
+- Uniqueness Score: {{scores.uniquenessScore}}/100
+- Completion Score: {{scores.completionScore}}/100
+- Quality Score: {{scores.qualityScore}}/100
+- Innovation Score: {{scores.innovationScore}}/100
+- Total Score: {{scores.totalScore}}/100
+
+## Application Details
+{{#if applicationDetails}}
+{{applicationDetails}}
+{{else}}
+No additional application details were provided.
+{{/if}}
+
+## Evaluation Guidelines
+- Approved: Total score >= 85 with no individual score below 70
+- Pending: Total score between 70-84, or any individual score below 65
+- Rejected: Total score < 70, or multiple individual scores below 60
+
+## Instructions
+1. Analyze the scores and determine the decision (Approved, Pending, or Rejected)
+2. Identify key strengths (3-5 items)
+3. Identify areas for improvement (2-4 items)
+4. Provide specific recommendations (3-5 items)
+5. Write a comprehensive feedback paragraph summarizing the evaluation
+`;

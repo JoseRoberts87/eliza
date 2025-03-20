@@ -79,41 +79,10 @@ export class EnigmaInteractionClient {
                 const success = await this.callYconicAgent(
                     "yconicScore",
                     "550e8400-e29b-41d4-a716-446655440005",
-                    "APPLICATION_DECISION",
+                    "APPLICATION_DECISION, APPLICATION_DECISION_MAKER " + scoredApplication.message.toString(),
                     submission
                 );
             }
-
-            // if (
-            //     this.runtime.character.name === "yconic" &&
-            //     scoredApplication.status === ApplicationStatus.SCORED
-            // ) {
-            //     try {
-            //         elizaLogger.info(
-            //             "runtime.agentId@@@@:",
-            //             this.runtime.agentId
-            //         );
-            //         const emailContent: EmailContent = {
-            //             to: "webterpr@gmail.com",
-            //             subject: "Yconic Application Accepted",
-            //             text: "Congratulations! Your application has been accepted. Please follow the instructions to complete the process.",
-            //         };
-
-
-            //         // await this.client.db.updateApplicationStatus(
-            //         //     scoredApplication.id,
-            //         //     ApplicationStatus.ACCEPTED
-            //         // );
-
-            //         elizaLogger.info("#######################################");
-            //         elizaLogger.info(this.runtime.clients.email);
-
-            //         elizaLogger.info("CONGRATULATIONS!!!!!!!!!!!!");
-            //         elizaLogger.info("#######################################");
-            //     } catch (error) {
-            //         elizaLogger.error("Error sending email:", error);
-            //     }
-            // }
         } catch (error) {
             elizaLogger.error("Error handling Enigma interactions:", error);
         }
@@ -125,8 +94,6 @@ export class EnigmaInteractionClient {
         agentAction: string,
         submisison: Submission
     ): Promise<boolean> {
-        elizaLogger.info("Calling Yconic completion...");
-
         const fileContent = new Blob([
             fs.readFileSync(submisison.attachments[0].url),
         ]);

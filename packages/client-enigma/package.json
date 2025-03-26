@@ -1,0 +1,43 @@
+{
+    "name": "@elizaos/client-enigma",
+    "version": "0.1.0",
+    "main": "dist/index.js",
+    "module": "dist/index.js",
+    "type": "module",
+    "types": "dist/index.d.ts",
+    "exports": {
+        "./package.json": "./package.json",
+        ".": {
+            "import": {
+                "@elizaos/source": "./src/index.ts",
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            }
+        }
+    },
+    "files": [
+        "dist"
+    ],
+    "dependencies": {
+        "@elizaos/core": "workspace:*",
+        "@elizaos/adapter-postgres": "workspace:*",
+        "@elizaos/client-email": "workspace:*",
+        "pg": "^8.11.3",
+        "pg-promise": "^11.5.4"
+    },
+    "devDependencies": {
+        "@types/pg": "^8.10.9",
+        "@types/jest": "^29.5.0",
+        "@types/node": "^18.15.11",
+        "@typescript-eslint/eslint-plugin": "^5.57.1",
+        "@typescript-eslint/parser": "^5.57.1",
+        "eslint": "^8.37.0",
+        "jest": "^29.5.0",
+        "ts-jest": "^29.1.0",
+        "typescript": "^5.0.3"
+    },
+    "scripts": {
+        "build": "tsup --format esm --dts",
+        "dev": "tsup --format esm --dts --watch"
+    }
+}

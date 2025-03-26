@@ -681,6 +681,28 @@ export type Plugin = {
     /** Optional post charactor processor handler */
     handlePostCharacterLoaded?: (char: Character) => Promise<Character>;
 };
+/**
+ * Available client platforms
+ */
+export enum Clients {
+    ALEXA= "alexa",
+    DISCORD = "discord",
+    DIRECT = "direct",
+    TWITTER = "twitter",
+    TELEGRAM = "telegram",
+    TELEGRAM_ACCOUNT = "telegram-account",
+    FARCASTER = "farcaster",
+    LENS = "lens",
+    AUTO = "auto",
+    SLACK = "slack",
+    GITHUB = "github",
+    INSTAGRAM = "instagram",
+    SIMSAI = "simsai",
+    XMTP = "xmtp",
+    DEVA = "deva",
+    ENIGMA = "enigma",
+    EMAIL = "email",
+}
 
 export interface IAgentConfig {
     [key: string]: string;

@@ -1,0 +1,63 @@
+{{!
+{
+  "name": "Application Response",
+  "subject": "Your Application Status Update"
+}
+}}
+
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color:
+            #333; max-width: 600px; margin: 0 auto; padding: 20px; } .header {
+            margin-bottom: 30px; } .content { margin-bottom: 30px; } .footer {
+            margin-top: 30px; font-size: 0.9em; color: #666; }
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <h2>Hello {{applicantName}},</h2>
+        </div>
+
+        <div class="content">
+            <p>Thank you for your application to the Yconic VC Accelerator
+                program.</p>
+
+            {{#if isAccepted}}
+                <p>We are pleased to inform you that your application has been
+                    <strong>accepted</strong>!</p>
+
+                <p>Your application demonstrated
+                    {{strengths}}
+                    which aligns perfectly with what we're looking for in our
+                    program.</p>
+
+                <p>Next steps:</p>
+                <ul>
+                    {{#each nextSteps}}
+                        <li>{{this}}</li>
+                    {{/each}}
+                </ul>
+            {{else}}
+                <p>After careful review of your application, we regret to inform
+                    you that we are unable to move forward with your application
+                    at this time.</p>
+
+                <p>{{feedbackMessage}}</p>
+
+                <p>We encourage you to:</p>
+                <ul>
+                    <li>Continue developing your project</li>
+                    <li>Consider reapplying in our next cohort</li>
+                    <li>Stay connected with our community</li>
+                </ul>
+            {{/if}}
+        </div>
+
+        <div class="footer">
+            <p>Best regards,<br />
+                The Yconic VC Accelerator Team</p>
+        </div>
+    </body>
+</html>

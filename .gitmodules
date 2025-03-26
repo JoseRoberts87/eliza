@@ -1,3 +1,7 @@
 [submodule "Project"]
 	path = Project
 	url = git@github.com:crcnum4/DevAccelTicker.git
+	
+[submodule "characters"]
+	path = characters
+	url = https://github.com/elizaos/characters

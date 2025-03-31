@@ -16,9 +16,14 @@ class EnigmaManager {
     async cleanup() {
         await this.client.cleanup();
     }
+
+    async stop() {
+        await this.cleanup();
+    }
 }
 
 export const EnigmaClientInterface: Client = {
+    name: "enigma",
     async start(runtime: IAgentRuntime) {
         const config: EnigmaConfig = {
             ENIGMA_DRY_RUN: process.env.ENIGMA_DRY_RUN === 'true',
@@ -42,11 +47,7 @@ export const EnigmaClientInterface: Client = {
             await manager.cleanup();
             throw error;
         }
-    },
-
-    async stop(_runtime: IAgentRuntime) {
-        elizaLogger.warn("Enigma client does not support stopping yet");
-    },
+    }
 };
 
 export default EnigmaClientInterface; 

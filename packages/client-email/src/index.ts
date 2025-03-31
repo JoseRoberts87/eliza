@@ -48,6 +48,10 @@ class EmailClientManager {
         });
     }
 
+    async stop() {
+        await this.transporter.close();
+    }
+
     private setupQueueHandlers(): void {
         this.queueManager.on("process", async (email) => {
             try {
@@ -155,6 +159,7 @@ class EmailClientManager {
 }
 
 export const EmailClientInterface: Client = {
+    name: "email",
     async start(runtime: IAgentRuntime) {
         elizaLogger.info("Starting email client");
         const config: EmailClientConfig = {
@@ -178,11 +183,7 @@ export const EmailClientInterface: Client = {
 
         const manager = new EmailClientManager(runtime, config);
         return manager;
-    },
-
-    async stop(runtime: IAgentRuntime) {
-        elizaLogger.warn("Email client does not support stopping yet");
-    },
+    }
 };
 
 export default EmailClientInterface;
